@@ -1,0 +1,16 @@
+# Redirects from the previous WordPress site (Netlify / Cloudflare Pages format).
+# Other hosts: recreate these as 301 rules. Keep in sync with legacyRedirects in next.config.ts (used by the Next.js server build).
+
+# Individual staff bio pages are now one team page
+/our-team-*                 /our-team/                 301
+
+# Retired pages
+/test-add/                  /                          301
+/covid-safe-practices/      /                          301
+
+# Old "Locations/Branches" menu item pointed at Contact
+/branches/                  /locations/                301
+
+# Blog articles keep their original URLs (now part of /blog/), so no redirects needed.
+# NOT redirected on purpose — these WordPress forms must stay live:
+#   /ndis-referral-form/  /ndis-service-agreement/  /revised-planned-intervention/

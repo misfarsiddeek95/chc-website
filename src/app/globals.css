@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --color-chc-purple: #27156F;
+  --color-chc-purple-light: #3820A0;
+  --color-chc-purple-muted: #EEE9FF;
+  --color-chc-orange: #FF9D00;
+  --color-chc-orange-light: #FFBE55;
+  --color-chc-orange-text: #9E5C00; /* orange for small text on light grounds (4.5:1+) */
+  --color-chc-cream: #FAFAF7;
+  --color-chc-warm: #F5F2EC;
+  --color-chc-lavender: #F0EDFF;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* --font-poppins is set by next/font in src/app/layout.tsx (self-hosted, preloaded). */
+body {
+  font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+  background-color: #FAFAF7;
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+}
+
+/* Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 28s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+/* Scrollbar hide */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Service card hover */
+.service-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(39, 21, 111, 0.15);
+}
+.service-card:hover .service-img {
+  transform: scale(1.05);
+}
+.service-img {
+  transition: transform 0.35s ease;
+}
+.service-card:hover .arrow-icon {
+  transform: translateX(4px);
+}
+.arrow-icon {
+  transition: transform 0.2s ease;
+}
+
+/* Nav scroll effect */
+.nav-scrolled {
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 24px rgba(39, 21, 111, 0.1);
+  background-color: rgba(255, 255, 255, 0.96) !important;
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid #FF9D00;
+  outline-offset: 2px;
+}
+
+/* Audience chip */
+.audience-chip {
+  transition: all 0.18s ease;
+}
+
+/* ─── Motion ──────────────────────────────────────────────────────────────────
+   Everything here is decorative. Under prefers-reduced-motion it is switched
+   off, and the hero slider stops auto-advancing (its timer bar doesn't run). */
+
+/* Hero: lines rise in on each slide; photo slowly settles; timer bar fills */
+@keyframes hero-in { from { opacity: 0; translate: 0 18px; } to { opacity: 1; translate: 0 0; } }
+.hero-in { animation: hero-in .7s cubic-bezier(.2, .7, .2, 1) both; }
+@keyframes hero-zoom { from { scale: 1.08; } to { scale: 1; } }
+.hero-zoom { animation: hero-zoom 7s ease-out both; }
+@keyframes hero-progress { from { width: 0; } to { width: 100%; } }
+.hero-progress { display: block; height: 100%; width: 0; background: #FF9D00; border-radius: inherit; animation: hero-progress 6s linear forwards; }
+@keyframes hero-draw { from { stroke-dashoffset: 220; } to { stroke-dashoffset: 0; } }
+.hero-swoosh path { stroke-dasharray: 220; animation: hero-draw .9s .45s ease-out both; }
+@keyframes hero-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+.hero-float { animation: hero-float 6s ease-in-out infinite; }
+
+/* Services ribbon under the hero */
+.ribbon-track { animation: marquee 45s linear infinite; }
+.ribbon-track:hover { animation-play-state: paused; }
+
+/* Slow rotation for the decorative arcs */
+@keyframes arc-spin { to { rotate: 360deg; } }
+.arc-spin { animation: arc-spin 90s linear infinite; }
+
+/* Content swapped by tabs (Who we help, testimonials, locations) */
+@keyframes fade-swap { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+.fade-swap { animation: fade-swap .45s ease-out both; }
+
+/* Scroll reveal: elements marked data-reveal ease up as they enter the viewport.
+   Uses CSS scroll-driven animations (no JavaScript); browsers without support
+   simply show the content, so nothing is ever hidden from readers or crawlers. */
+@keyframes reveal-up { from { opacity: 0; translate: 0 36px; } to { opacity: 1; translate: 0 0; } }
+@supports (animation-timeline: view()) {
+  [data-reveal] {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+/* Small orange line before section labels */
+.eyebrow { display: inline-flex; align-items: center; gap: .75rem; }
+.eyebrow::before { content: ''; width: 1.75rem; height: 2px; border-radius: 2px; background: #FF9D00; flex-shrink: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-in, .hero-zoom, .hero-float, .hero-swoosh path, .ribbon-track, .arc-spin, .fade-swap, .marquee-track, [data-reveal] {
+    animation: none !important;
+  }
+  .hero-progress { animation: none; width: 100%; }
+}
