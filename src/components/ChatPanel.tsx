@@ -145,7 +145,7 @@ export default function ChatPanel({
         />
         <button
           type="submit"
-          className="w-10 h-10 flex-shrink-0 flex items-center justify-center bg-[#27156F] hover:bg-[#3820A0] text-white rounded-xl transition-colors"
+          className="w-12 h-12 flex-shrink-0 flex items-center justify-center bg-[#27156F] hover:bg-[#3820A0] text-white rounded-xl transition-colors"
           aria-label="Send message"
         >
           <Icons.Send />

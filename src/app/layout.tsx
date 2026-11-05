@@ -11,7 +11,6 @@ const poppins = localFont({
   variable: '--font-poppins',
   display: 'swap',
   src: [
-    { path: '../fonts/poppins-latin-300-normal.woff2', weight: '300', style: 'normal' },
     { path: '../fonts/poppins-latin-400-normal.woff2', weight: '400', style: 'normal' },
     { path: '../fonts/poppins-latin-400-italic.woff2', weight: '400', style: 'italic' },
     { path: '../fonts/poppins-latin-500-normal.woff2', weight: '500', style: 'normal' },
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   title: SITE_NAME,
   description: 'Allied health, NDIS disability support and in-home care across South East Queensland.',
-  icons: { icon: '/brand/chc-mark.png', apple: '/brand/chc-mark.png' },
+  icons: { icon: '/brand/icon-192.png', apple: '/brand/icon-192.png' },
   alternates: { types: RSS_ALTERNATE },
   formatDetection: { telephone: false },
 }
@@ -42,7 +41,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en-AU" className={poppins.variable} data-scroll-behavior="smooth">
-      <body suppressHydrationWarning>
+      <body>
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

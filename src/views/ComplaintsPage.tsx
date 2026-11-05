@@ -4,7 +4,7 @@ import { contact, forms } from '@/content/site'
 
 const external = [
   { name: 'NDIS Quality and Safeguards Commission', who: 'For NDIS participants', href: 'https://www.ndiscommission.gov.au/complaints/report' },
-  { name: 'Aged Care Quality and Safety Commission', who: 'For aged care and Home Care Package clients', href: 'https://www.agedcarequality.gov.au/' },
+  { name: 'Aged Care Quality and Safety Commission', who: 'For aged care and Support at Home clients', href: 'https://www.agedcarequality.gov.au/' },
   { name: 'Office of the Health Ombudsman (Queensland)', who: 'For any health service in Queensland · 133 OHO (133 646)', href: 'https://www.oho.qld.gov.au/' },
 ]
 
@@ -21,7 +21,7 @@ export default function ComplaintsPage() {
             <a href={forms.feedback} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-[#27156F] hover:bg-[#3820A0] text-white font-semibold px-6 py-4 rounded-xl transition-colors">
               Give feedback<span className="sr-only"> (opens in a new tab)</span> <Icons.ExternalLink />
             </a>
-            <a href={forms.complaint} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-6 py-4 rounded-xl transition-colors">
+            <a href={forms.complaint} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-4 rounded-xl transition-colors">
               Make a complaint<span className="sr-only"> (opens in a new tab)</span> <Icons.ExternalLink />
             </a>
             <p className="text-sm text-gray-600 pt-2">Or call <a href={contact.phoneHref} className="text-[#27156F] font-semibold underline">{contact.phone}</a> or email <a href={`mailto:${contact.email}`} className="text-[#27156F] font-semibold underline">{contact.email}</a>.</p>

@@ -1,10 +1,9 @@
-'use client'
-
 import type React from 'react'
 import Image from 'next/image'
 import { Icons } from '@/components/Icons'
 import Link from '@/components/Link'
 import { contact } from '@/content/site'
+import { ActionButton } from '@/components/SiteActions'
 
 // Building blocks for inner pages. Every value matches the homepage
 // (src/views/HomePage.tsx): same colours, radii, type scale and spacing.
@@ -71,23 +70,52 @@ export function Section({
   )
 }
 
+const primaryCls = 'inline-flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]'
+const outlineCls = 'inline-flex items-center justify-center gap-2 border-2 border-[#27156F] text-[#27156F] hover:bg-[#27156F] hover:text-white font-semibold px-7 py-4 rounded-xl text-base transition-all'
+
+/**
+ * Book / chat buttons. `true` (from a Server Component) renders a small client button
+ * that opens the shared dialog; a function (from a Client Component) is called directly.
+ */
+type Action = (() => void) | true
+
+function BookCta({ action, label }: { action: Action; label: React.ReactNode }) {
+  return action === true
+    ? <ActionButton action="book" className={primaryCls}>{label}<Icons.ArrowRight /></ActionButton>
+    : <PrimaryButton onClick={action}>{label}<Icons.ArrowRight /></PrimaryButton>
+}
+
+function ChatCta({ action }: { action: Action }) {
+  return action === true
+    ? <ActionButton action="chat" className={outlineCls}><Icons.Chat />Chat with Our Team</ActionButton>
+    : <OutlineButton onClick={action}><Icons.Chat />Chat with Our Team</OutlineButton>
+}
+
 export function PrimaryButton({ children, onClick, className = '', type = 'button' }: { children: React.ReactNode; onClick?: () => void; className?: string; type?: 'button' | 'submit' }) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02] ${className}`}
+      className={`inline-flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02] ${className}`}
     >
       {children}
     </button>
   )
 }
 
-export function OutlineButton({ children, onClick, to, light = false }: { children: React.ReactNode; onClick?: () => void; to?: string; light?: boolean }) {
+/** A link styled like PrimaryButton (internal paths, #anchors, mailto: or tel:). */
+export function PrimaryLink({ children, href, className = '' }: { children: React.ReactNode; href: string; className?: string }) {
+  const cls = `inline-flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02] ${className}`
+  return href.startsWith('/') ? <Link to={href} className={cls}>{children}</Link> : <a href={href} className={cls}>{children}</a>
+}
+
+export function OutlineButton({ children, onClick, to, href, light = false }: { children: React.ReactNode; onClick?: () => void; to?: string; href?: string; light?: boolean }) {
   const cls = light
     ? 'inline-flex items-center justify-center gap-2 border-2 border-white/70 text-white hover:bg-white hover:text-[#27156F] font-semibold px-7 py-4 rounded-xl text-base transition-all'
     : 'inline-flex items-center justify-center gap-2 border-2 border-[#27156F] text-[#27156F] hover:bg-[#27156F] hover:text-white font-semibold px-7 py-4 rounded-xl text-base transition-all'
-  return to ? <Link to={to} className={cls}>{children}</Link> : <button type="button" onClick={onClick} className={cls}>{children}</button>
+  if (to) return <Link to={to} className={cls}>{children}</Link>
+  if (href) return <a href={href} className={cls}>{children}</a>
+  return <button type="button" onClick={onClick} className={cls}>{children}</button>
 }
 
 export function TextLink({ to, children, light = false }: { to: string; children: React.ReactNode; light?: boolean }) {
@@ -101,10 +129,12 @@ export function TextLink({ to, children, light = false }: { to: string; children
 
 /** Inner-page hero: breadcrumb, badge, H1, intro, CTAs and an image (or a tinted panel). */
 export function PageHero({
-  crumbs, badge, title, intro, img, imgAlt, tint = '#ddd4f7', onBook, onChat, primaryLabel = 'Book an Appointment', aside,
+  crumbs, badge, title, intro, img, imgAlt, tint = '#ddd4f7', onBook, onChat, primaryLabel = 'Book an Appointment', aside, actions,
 }: {
   crumbs: Crumb[]; badge?: string; title: React.ReactNode; intro: React.ReactNode; img?: string; imgAlt?: string; tint?: string
-  onBook?: () => void; onChat?: () => void; primaryLabel?: string; aside?: React.ReactNode
+  onBook?: Action; onChat?: Action; primaryLabel?: string; aside?: React.ReactNode
+  /** Custom call-to-action buttons or links, used instead of the book/chat pair. */
+  actions?: React.ReactNode
 }) {
   return (
     <section className="relative bg-[#FAFAF7] overflow-hidden">
@@ -121,10 +151,12 @@ export function PageHero({
             )}
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.08] text-[#1a1238]">{title}</h1>
             <div className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-xl">{intro}</div>
-            {(onBook || onChat) && (
+            {actions ? (
+              <div className="flex flex-wrap gap-3 pt-1">{actions}</div>
+            ) : (onBook || onChat) && (
               <div className="flex flex-wrap gap-3 pt-1">
-                {onBook && <PrimaryButton onClick={onBook}>{primaryLabel}<Icons.ArrowRight /></PrimaryButton>}
-                {onChat && <OutlineButton onClick={onChat}><Icons.Chat />Chat with Our Team</OutlineButton>}
+                {onBook && <BookCta action={onBook} label={primaryLabel} />}
+                {onChat && <ChatCta action={onChat} />}
               </div>
             )}
           </div>
@@ -233,8 +265,8 @@ export function Callout({ children, icon = 'info' }: { children: React.ReactNode
 
 /** Closing conversion band used at the end of every inner page. */
 export function CtaBand({
-  title = 'Ready to get started?', body, onBook, onChat,
-}: { title?: string; body?: React.ReactNode; onBook: () => void; onChat: () => void }) {
+  title = 'Ready to get started?', body, onBook = true, onChat = true,
+}: { title?: string; body?: React.ReactNode; onBook?: Action; onChat?: Action }) {
   return (
     <section aria-labelledby="cta-title" className="py-20 md:py-24 bg-[#FAFAF7] relative overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 opacity-40" style={{ background: 'radial-gradient(ellipse at 20% 50%, #EEE9FF 0%, transparent 50%), radial-gradient(ellipse at 80% 50%, #FFF4E0 0%, transparent 50%)' }} />
@@ -244,8 +276,8 @@ export function CtaBand({
           {body ?? <>Whether you know the service you need or want to talk through your options, our team is here to help. Call <a href={contact.phoneHref} className="text-[#27156F] font-semibold underline">{contact.phone}</a>.</>}
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <PrimaryButton onClick={onBook}>Book an Appointment<Icons.ArrowRight /></PrimaryButton>
-          <OutlineButton onClick={onChat}><Icons.Chat />Chat with Our Team</OutlineButton>
+          <BookCta action={onBook} label="Book an Appointment" />
+          <ChatCta action={onChat} />
         </div>
       </div>
     </section>

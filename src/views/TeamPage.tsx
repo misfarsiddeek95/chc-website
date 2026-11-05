@@ -1,7 +1,5 @@
-'use client'
-
 import { CtaBand, PageHero, Section, SectionHeader, TextLink } from '@/components/ui'
-import { useSiteUi } from '@/ui-context'
+import { staffLanguages } from '@/content/site'
 
 // Team listing as published on the current website (Oct 2026). First names and
 // roles only; duplicates removed. Photos and bios: see docs/IMPLEMENTATION.md.
@@ -66,7 +64,7 @@ const groups: { id: string; title: string; intro: string; members: Member[] }[] 
 ]
 
 const supportWorkers = [
-  'Ali', 'Anayet', 'Aref', 'Christine', 'Dennis', 'Diana', 'Eric', 'Gertude', 'Gracezel', 'Jack', 'Jacquis', 'Johnson',
+  'Ali', 'Anayet', 'Aref', 'Christine', 'Dennis', 'Diana', 'Eric', 'Getrude', 'Gracezel', 'Jack', 'Jacquis', 'Johnson',
   'Joshua', 'Karla', 'Nabilah', 'Nomzamo', 'Nusrat', 'Omy', 'Pamphile', 'Peter K', 'Rahila', 'Rose', 'Rubab', 'Sophia',
   'Winnie', 'Yout', 'Zia', 'Zvareverwei',
 ]
@@ -76,7 +74,6 @@ function initials(name: string) {
 }
 
 export default function TeamPage() {
-  const { openBook, openChat } = useSiteUi()
   return (
     <>
       <PageHero
@@ -86,8 +83,8 @@ export default function TeamPage() {
         intro={<p>Our multidisciplinary team works together across allied health, nursing and in-home support, so you get joined-up care from people who know you.</p>}
         img="https://images.unsplash.com/photo-1764006145420-df3006edf060?w=800&h=600&fit=crop&auto=format"
         imgAlt="Healthcare professional with a client in a wheelchair"
-        onBook={openBook}
-        onChat={openChat}
+        onBook
+        onChat
       />
 
       <nav aria-label="Team sections" className="bg-white border-b border-gray-100 sticky top-[64px] z-30">
@@ -131,7 +128,22 @@ export default function TeamPage() {
         <div className="mt-10"><TextLink to="/careers/">Interested in joining us? View careers</TextLink></div>
       </Section>
 
-      <CtaBand onBook={openBook} onChat={openChat} />
+      <Section id="languages" tone="white" labelledBy="languages-title">
+        <div className="grid md:grid-cols-[1fr_1.4fr] gap-10 items-center">
+          <SectionHeader
+            eyebrow="Care in your language"
+            title={<span id="languages-title">Many of our team are bilingual.</span>}
+            intro="Ask for a team member who speaks your language when you book. We can also arrange a professional interpreter."
+          />
+          <ul className="flex flex-wrap gap-2.5">
+            {staffLanguages.map(l => (
+              <li key={l} className="bg-[#F0EDFF] text-[#27156F] text-sm font-medium px-4 py-2 rounded-full">{l}</li>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      <CtaBand />
     </>
   )
 }

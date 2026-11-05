@@ -1,77 +1,24 @@
 'use client'
 
-import React, { useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import { Icons } from '@/components/Icons'
 import Link from '@/components/Link'
 import { contact } from '@/content/site'
+import { HONEYPOT, regions, serviceOptions, subjects, summaryLines, validate as validateShared, maxLengths, type Variant } from '@/lib/enquiry'
 
-// One form for bookings, referrals and general enquiries.
+const TURNSTILE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''
+
+// One form for bookings, referrals, general enquiries and franchise interest.
 // Delivery: if NEXT_PUBLIC_FORM_ENDPOINT is set at build time, the form POSTs JSON
 // there (any form backend: Formspree, Make, Power Automate, a CRM webhook…). Without
 // an endpoint it opens the visitor's email app with the details filled in, so the
 // form always reaches the team. See README.md › Forms.
 
-export const serviceOptions = [
-  'Physiotherapy',
-  'Occupational Therapy',
-  'Speech Pathology',
-  'Podiatry',
-  'NDIS Disability Services',
-  'Home & Community Support',
-  'Aged Care Services',
-  'Supported Accommodation (SIL / STA)',
-  'Early Intervention',
-  'Maintenance in the Home',
-  'Community Nursing',
-  'Not sure — help me choose',
-]
-
-const regions = [
-  'South East Queensland',
-  'North Queensland',
-  'New South Wales',
-  'Victoria',
-  'South Australia',
-  'Other / telehealth',
-]
-
-type Variant = 'book' | 'referral' | 'contact'
-
-type Values = Record<string, string>
 type Errors = Partial<Record<string, string>>
+type Values = Record<string, string>
 
 const ENDPOINT = process.env.NEXT_PUBLIC_FORM_ENDPOINT || ''
 const REQUEST_TIMEOUT_MS = 15000
-/** Hidden field that people never see or fill in; bots that fill every field are ignored. */
-const HONEYPOT = 'website'
-
-const maxLengths: Record<string, number> = {
-  firstName: 60, lastName: 60, phone: 30, email: 120, organisation: 120, ndisNumber: 20, message: 2000,
-}
-
-function validate(values: Values, variant: Variant): Errors {
-  const e: Errors = {}
-  if (!values.firstName?.trim()) e.firstName = 'Enter your first name.'
-  if (!values.lastName?.trim()) e.lastName = 'Enter your last name.'
-  const digits = (values.phone || '').replace(/[^\d]/g, '')
-  if (digits.length < 8 || digits.length > 15) e.phone = 'Enter a phone number we can call, e.g. 0412 345 678.'
-  if (variant === 'contact' || values.email?.trim()) {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email?.trim() || '')) e.email = 'Enter an email address like name@example.com.'
-  }
-  // Checked in on-screen order, so focus goes to the first field with a problem.
-  if (variant === 'referral' && !values.organisation?.trim()) e.organisation = 'Enter your organisation or practice.'
-  if (values.ndisNumber?.trim() && !/^\d{9}$/.test(values.ndisNumber.replace(/\s/g, ''))) {
-    e.ndisNumber = 'NDIS numbers have 9 digits. Leave this blank if you’re not sure.'
-  }
-  if (variant === 'contact' && !values.message?.trim()) e.message = 'Tell us briefly how we can help.'
-  if (!values.consent) e.consent = 'Please agree so our team can contact you.'
-  return e
-}
-
-const labels: Record<string, string> = {
-  firstName: 'First name', lastName: 'Last name', phone: 'Phone', email: 'Email', organisation: 'Organisation',
-  service: 'Service', region: 'Location', ndisNumber: 'NDIS number', message: 'Message',
-}
 
 /** Trimmed copy of the visible fields only (no honeypot, no empty values). */
 function clean(values: Values): Values {
@@ -88,16 +35,8 @@ function clean(values: Values): Values {
 const MAILTO_MESSAGE_LIMIT = 1200
 
 function toMailto(values: Values, variant: Variant) {
-  const subject =
-    variant === 'book' ? 'Appointment request' : variant === 'referral' ? 'Client referral' : 'Website enquiry'
-  const body = Object.keys(labels)
-    .filter(k => values[k])
-    .map(k => {
-      const v = k === 'message' && values[k].length > MAILTO_MESSAGE_LIMIT ? values[k].slice(0, MAILTO_MESSAGE_LIMIT) + '…' : values[k]
-      return `${labels[k]}: ${v}`
-    })
-    .join('\n')
-  return `mailto:${contact.email}?subject=${encodeURIComponent(`${subject} — ${values.firstName} ${values.lastName}`)}&body=${encodeURIComponent(body)}`
+  const body = summaryLines(values, MAILTO_MESSAGE_LIMIT).join('\n')
+  return `mailto:${contact.email}?subject=${encodeURIComponent(`${subjects[variant]} — ${values.firstName} ${values.lastName}`)}&body=${encodeURIComponent(body)}`
 }
 
 const inputCls =
@@ -119,6 +58,36 @@ export default function EnquiryForm({
   const [values, setValues] = useState<Values>({ service: defaultService })
   const [errors, setErrors] = useState<Errors>({})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'sent' | 'mailto' | 'error'>('idle')
+  const [serverMessage, setServerMessage] = useState('')
+  const turnstileRef = useRef<HTMLDivElement>(null)
+  const turnstileToken = useRef('')
+
+  // Cloudflare Turnstile loads only when a site key is configured, and only once the form is shown.
+  useEffect(() => {
+    if (!TURNSTILE_KEY || !ENDPOINT || !turnstileRef.current) return
+    let widget: string | undefined
+    const render = () => {
+      const t = (window as unknown as { turnstile?: { render: (el: HTMLElement, o: object) => string; remove: (id: string) => void } }).turnstile
+      if (!t || !turnstileRef.current || widget) return
+      widget = t.render(turnstileRef.current, { sitekey: TURNSTILE_KEY, callback: (tok: string) => { turnstileToken.current = tok }, 'expired-callback': () => { turnstileToken.current = '' } })
+    }
+    if ((window as unknown as { turnstile?: unknown }).turnstile) render()
+    else {
+      let el = document.querySelector<HTMLScriptElement>('script[data-turnstile]')
+      if (!el) {
+        el = document.createElement('script')
+        el.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+        el.async = true
+        el.dataset.turnstile = '1'
+        document.head.appendChild(el)
+      }
+      el.addEventListener('load', render)
+    }
+    return () => {
+      const t = (window as unknown as { turnstile?: { remove: (id: string) => void } }).turnstile
+      if (widget && t) t.remove(widget)
+    }
+  }, [])
   const summaryRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -132,7 +101,7 @@ export default function EnquiryForm({
     ev.preventDefault()
     if (status === 'submitting') return // Enter pressed again while sending
     setStatus('idle')
-    const found = validate(values, variant)
+    const found = validateShared(values, variant)
     setErrors(found)
     const firstInvalid = Object.keys(found)[0]
     if (firstInvalid) {
@@ -157,10 +126,26 @@ export default function EnquiryForm({
       const res = await fetch(ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ type: variant, ...data, page: window.location.pathname }),
+        body: JSON.stringify({ type: variant, ...data, page: window.location.pathname, ...(turnstileToken.current ? { turnstileToken: turnstileToken.current } : {}) }),
         signal: controller.signal,
       })
-      if (!res.ok) throw new Error(`Form endpoint responded ${res.status}`)
+      if (res.status === 422) {
+        // The server's checks found something the browser's didn't: show its field messages.
+        const body = (await res.json().catch(() => ({}))) as { errors?: Errors }
+        if (body.errors && Object.keys(body.errors).length) {
+          setErrors(body.errors)
+          setStatus('idle')
+          formRef.current?.querySelector<HTMLElement>(`[name="${Object.keys(body.errors)[0]}"]`)?.focus()
+          return
+        }
+      }
+      if (!res.ok) {
+        const body = (await res.json().catch(() => ({}))) as { error?: string }
+        setServerMessage(res.status === 429 || res.status === 503 ? body.error ?? '' : '')
+        throw new Error(`Form endpoint responded ${res.status}`)
+      }
+      // Conversion event for analytics (src/components/Analytics.tsx); no personal details.
+      window.dispatchEvent(new CustomEvent('chc:enquiry-sent', { detail: { type: variant } }))
       setStatus('sent')
     } catch {
       setStatus('error')
@@ -182,7 +167,7 @@ export default function EnquiryForm({
         name,
         value: values[name] || '',
         onChange: set(name),
-        ...(maxLengths[name] ? { maxLength: maxLengths[name] } : {}),
+        ...((maxLengths as Record<string, number>)[name] ? { maxLength: (maxLengths as Record<string, number>)[name] } : {}),
         'aria-invalid': errors[name] ? true : undefined,
         'aria-describedby': [hint ? id(name + '-hint') : '', errors[name] ? id(name + '-err') : ''].filter(Boolean).join(' ') || undefined,
         className: inputCls + ' ' + (errors[name] ? 'border-red-600' : 'border-gray-300'),
@@ -208,7 +193,9 @@ export default function EnquiryForm({
       </div>
       {(status === 'error' || errorCount > 0) && (
         <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {status === 'error'
+          {status === 'error' && serverMessage
+            ? serverMessage
+            : status === 'error'
             ? <>Sorry, we couldn’t send your request just now. Please try again, or call us on <a className="font-semibold underline" href={contact.phoneHref}>{contact.phone}</a>.</>
             : `Please fix ${errorCount === 1 ? 'the highlighted field' : `the ${errorCount} highlighted fields`} below.`}
         </div>
@@ -219,9 +206,17 @@ export default function EnquiryForm({
       </div>
       <div className={`grid grid-cols-1 ${compact ? '' : 'sm:grid-cols-2'} gap-3`}>
         {field('phone', 'Phone', <input type="tel" autoComplete="tel" inputMode="tel" />)}
-        {field('email', variant === 'contact' ? 'Email' : 'Email (optional)', <input type="email" autoComplete="email" />)}
+        {field('email', variant === 'contact' || variant === 'franchise' ? 'Email' : 'Email (optional)', <input type="email" autoComplete="email" />)}
       </div>
       {variant === 'referral' && field('organisation', 'Organisation', <input autoComplete="organization" placeholder="Hospital, GP practice or agency" />)}
+      {variant === 'franchise' ? field(
+        'region',
+        'Preferred location',
+        <select>
+          <option value="">Select a region…</option>
+          {regions.map(o => <option key={o}>{o}</option>)}
+        </select>,
+      ) : (
       <div className={`grid grid-cols-1 ${compact ? '' : 'sm:grid-cols-2'} gap-3`}>
         {field(
           'service',
@@ -240,8 +235,13 @@ export default function EnquiryForm({
           </select>,
         )}
       </div>
-      {!compact && field('ndisNumber', 'NDIS number (if you have one)', <input inputMode="numeric" />)}
-      {(variant === 'contact' || !compact) && field('message', variant === 'contact' ? 'How can we help?' : 'Anything we should know? (optional)', <textarea rows={4} />)}
+      )}
+      {!compact && variant !== 'franchise' && field('ndisNumber', 'NDIS number (if you have one)', <input inputMode="numeric" />)}
+      {(variant === 'contact' || variant === 'franchise' || !compact) && field(
+        'message',
+        variant === 'contact' ? 'How can we help?' : variant === 'franchise' ? 'Your background and goals' : 'Anything we should know? (optional)',
+        <textarea rows={4} />,
+      )}
       <div>
         <label className="flex items-start gap-2.5 text-sm text-gray-600">
           <input
@@ -260,14 +260,15 @@ export default function EnquiryForm({
         </label>
         {errors.consent && <p id={id('consent-err')} className="text-xs text-red-700 mt-1">{errors.consent}</p>}
       </div>
+      {TURNSTILE_KEY && ENDPOINT && <div ref={turnstileRef} className="min-h-[65px]" />}
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="w-full bg-[#FF9D00] hover:bg-[#e88e00] disabled:opacity-70 text-white font-semibold py-3 rounded-xl transition-colors text-sm"
+        className="w-full bg-[#FF9D00] hover:bg-[#e88e00] disabled:opacity-70 text-[#1a1238] font-semibold py-3 rounded-xl transition-colors text-sm"
       >
         {status === 'submitting'
           ? 'Sending…'
-          : submitLabel ?? (variant === 'book' ? 'Request Appointment' : variant === 'referral' ? 'Submit Referral' : 'Send Enquiry')}
+          : submitLabel ?? (variant === 'book' ? 'Request Appointment' : variant === 'referral' ? 'Submit Referral' : variant === 'franchise' ? 'Express Your Interest' : 'Send Enquiry')}
       </button>
       <p className="text-center text-xs text-gray-500">
         Prefer to talk? Call <a href={contact.phoneHref} className="text-[#27156F] font-medium hover:underline">{contact.phone}</a>.

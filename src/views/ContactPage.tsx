@@ -2,7 +2,7 @@ import { Icons } from '@/components/Icons'
 import EnquiryForm from '@/components/EnquiryForm'
 import { Breadcrumbs, Callout, Section } from '@/components/ui'
 import Link from '@/components/Link'
-import { clinics, contact, forms, social } from '@/content/site'
+import { clinics, contact, forms, mapEmbedUrl, social } from '@/content/site'
 
 export default function ContactPage() {
   return (
@@ -28,16 +28,14 @@ export default function ContactPage() {
                   </a>
                 </li>
                 <li>
-                  <a href={contact.phoneAltHref} className="flex items-center gap-4 group">
-                    <span className="w-12 h-12 rounded-2xl bg-[#27156F]/8 text-[#27156F] flex items-center justify-center"><Icons.Phone /></span>
-                    <span><span className="block text-sm text-gray-600">Alternative number</span><span className="block font-display text-lg font-bold text-[#1a1238] group-hover:text-[#27156F]">{contact.phoneAlt}</span></span>
-                  </a>
-                </li>
-                <li>
                   <a href={`mailto:${contact.email}`} className="flex items-center gap-4 group">
                     <span className="w-12 h-12 rounded-2xl bg-[#27156F]/8 text-[#27156F] flex items-center justify-center"><Icons.Mail /></span>
                     <span><span className="block text-sm text-gray-600">Email</span><span className="block font-display text-lg font-bold text-[#1a1238] group-hover:text-[#27156F] break-all">{contact.email}</span></span>
                   </a>
+                </li>
+                <li className="flex items-center gap-4">
+                  <span className="w-12 h-12 rounded-2xl bg-[#27156F]/8 text-[#27156F] flex items-center justify-center"><Icons.Clock /></span>
+                  <span><span className="block text-sm text-gray-600">Office &amp; phone hours</span><span className="block font-display text-lg font-bold text-[#1a1238]">{contact.hours}</span><span className="block text-sm text-gray-600">After hours, calls to {contact.phone} are still answered. Fax {contact.fax}.</span></span>
                 </li>
               </ul>
               <Callout icon="alert">
@@ -61,11 +59,19 @@ export default function ContactPage() {
           </div>
           <Link to="/locations/" className="inline-flex items-center gap-1 text-sm font-semibold text-[#27156F] hover:text-[#9e5c00]">Directions and details <Icons.ArrowRight /></Link>
         </div>
-        <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <ul className="grid sm:grid-cols-3 gap-4">
           {clinics.map(c => (
-            <li key={c.slug} className="rounded-2xl bg-[#FAFAF7] border border-gray-100 p-5">
-              <h3 className="font-display font-bold text-[#1a1238] mb-1">{c.name}</h3>
+            <li key={c.slug} className="rounded-2xl bg-[#FAFAF7] border border-gray-100 overflow-hidden">
+              {/* Embedded map (checklist: map on the Contact page). Lazy-loaded. */}
+              <div className="aspect-[16/10] bg-[#F0EDFF] border-b border-gray-100">
+                <iframe src={mapEmbedUrl(c)} title={`Map: Complete Healthcare Connect ${c.name}`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="w-full h-full border-0" />
+              </div>
+              <div className="p-5">
+              <h3 className="font-display font-bold text-[#1a1238] mb-1"><Link to={`/locations/${c.slug}/`} className="hover:underline">{c.name}</Link></h3>
               <address className="not-italic text-sm text-gray-600 leading-relaxed">{c.street}, {c.suburb} QLD {c.postcode}</address>
+              <p className="text-sm text-gray-600 mt-2">{contact.hoursShort}</p>
+              <a href={c.gbp} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[#27156F] hover:text-[#9e5c00]">View on Google <Icons.ExternalLink /><span className="sr-only"> (opens in a new tab)</span></a>
+              </div>
             </li>
           ))}
         </ul>

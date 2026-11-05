@@ -1,14 +1,10 @@
-'use client'
-
 import { Icons } from '@/components/Icons'
 import { CtaBand, PageHero, Section, TextLink } from '@/components/ui'
 import { contact } from '@/content/site'
 import { formatDate } from '@/content/blog'
 import { news } from '@/content/news'
-import { useSiteUi } from '@/ui-context'
 
 export default function NewsPage() {
-  const { openBook, openChat } = useSiteUi()
   return (
     <>
       <PageHero
@@ -62,7 +58,7 @@ export default function NewsPage() {
         </div>
       </Section>
 
-      <CtaBand onBook={openBook} onChat={openChat} />
+      <CtaBand />
     </>
   )
 }

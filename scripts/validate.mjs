@@ -89,19 +89,20 @@ const step = async (name, fn) => { try { await fn(); console.log('PASS', name) }
 await page.goto(base + '/', { waitUntil: 'domcontentloaded' })
 await step('services dropdown opens and navigates client-side', async () => {
   await page.getByRole('button', { name: 'Services' }).click()
-  await page.getByRole('link', { name: /Early Intervention/ }).first().click()
+  await page.getByRole('link', { name: /Paediatric & Early Intervention/ }).first().click()
   await page.waitForURL('**/early-intervention/')
-  await page.waitForFunction(() => document.title.startsWith('Early Intervention'), null, { timeout: 5000 })
+  await page.waitForFunction(() => document.title.startsWith('Paediatric Early Intervention'), null, { timeout: 5000 })
     .catch(async () => { throw new Error('title not updated: ' + (await page.title())) })
 })
 await step('hero slider: next, tabs and pause work', async () => {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' })
   const h1 = page.locator('h1')
-  if (!(await h1.innerText()).includes('Healthcare')) throw new Error('slide 1 heading missing')
+  if (!(await h1.innerText()).includes('Recover stronger')) throw new Error('slide 1 heading missing')
+  if ((await page.locator('[data-slide]').count()) !== 7) throw new Error('expected 7 slides')
   await page.getByRole('button', { name: 'Next slide' }).click()
-  await page.waitForFunction(() => document.querySelector('h1')?.textContent?.includes('Support for'))
+  await page.waitForFunction(() => document.querySelector('h1')?.textContent?.includes('Early support'))
   await page.getByRole('button', { name: /Show slide 3/ }).click()
-  await page.waitForFunction(() => document.querySelector('h1')?.textContent?.includes('A place to live'))
+  await page.waitForFunction(() => document.querySelector('h1')?.textContent?.includes('Personalised care'))
   const pause = page.getByRole('button', { name: 'Pause slideshow' })
   await pause.click()
   await page.getByRole('button', { name: 'Play slideshow' }).waitFor()
@@ -112,12 +113,14 @@ await step('locations: city tabs and arrows change the card', async () => {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' })
   const loc = page.locator('#locations')
   await loc.getByRole('tab', { name: 'Sydney' }).click()
-  await loc.locator('h3', { hasText: 'Sydney' }).first().waitFor()
-  if (await loc.getByText('Our five clinics').count()) throw new Error('Brisbane clinic list still shown for Sydney')
+  // Every city panel is in the HTML (for crawlers); only the chosen one is visible.
+  await loc.locator('h3:visible', { hasText: 'Sydney' }).first().waitFor()
+  if (await loc.getByText('Our three clinics').isVisible()) throw new Error('Brisbane clinic list still shown for Sydney')
   await loc.getByRole('button', { name: 'Next city' }).click()
-  await loc.locator('h3', { hasText: 'Melbourne' }).first().waitFor()
+  await loc.locator('h3:visible', { hasText: 'Melbourne' }).first().waitFor()
   await loc.getByRole('tab', { name: 'Brisbane' }).click()
-  await loc.getByText('Our five clinics').waitFor()
+  await loc.getByText('Our three clinics').waitFor()
+  if (await page.locator('#location-panel-2').count() !== 1) throw new Error('inactive city panels are missing from the HTML')
 })
 await step('booking dialog validates required fields', async () => {
   await page.getByRole('button', { name: 'Book Appointment' }).first().click()
@@ -129,7 +132,32 @@ await step('booking dialog validates required fields', async () => {
   await page.keyboard.press('Escape')
   if (await dialog.count()) throw new Error('dialog did not close on Escape')
 })
-await step('enquiry form success state (mailto fallback)', async () => {
+// Static build: forms hand off to the email app. Server build: forms POST to /api/enquiry,
+// which is stubbed here so no email is sent (scripts/api-test.mjs tests the real endpoint).
+const sentText = isStatic ? 'Almost done — send the email to finish.' : 'Thank you — your request is with our team.'
+if (!isStatic) {
+  await page.route('**/api/enquiry', async route => {
+    const body = route.request().postDataJSON()
+    if (body.firstName === 'Server') {
+      return route.fulfill({ status: 422, contentType: 'application/json', body: JSON.stringify({ error: 'Please check the highlighted fields.', errors: { phone: 'Server says: check this phone number.' } }) })
+    }
+    return route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' })
+  })
+  await step('server-side field errors are shown on the form', async () => {
+    await page.goto(base + '/contact/')
+    await page.getByLabel('First name').fill('Server')
+    await page.getByLabel('Last name').fill('Check')
+    await page.getByLabel('Phone').fill('0412 345 678')
+    await page.getByLabel('Email', { exact: true }).fill('test@example.com')
+    await page.getByLabel('How can we help?').fill('Testing')
+    await page.getByRole('checkbox', { name: /I agree/ }).check()
+    await page.getByRole('button', { name: 'Send Enquiry' }).click()
+    await page.getByText('Server says: check this phone number.').waitFor({ timeout: 3000 })
+    const focused = await page.evaluate(() => document.activeElement?.getAttribute('name'))
+    if (focused !== 'phone') throw new Error('focus not moved to the field: ' + focused)
+  })
+}
+await step('enquiry form success state', async () => {
   await page.goto(base + '/contact/')
   await page.getByLabel('First name').fill('Test')
   await page.getByLabel('Last name').fill('Person')
@@ -138,7 +166,7 @@ await step('enquiry form success state (mailto fallback)', async () => {
   await page.getByLabel('How can we help?').fill('Testing the form')
   await page.getByRole('checkbox', { name: /I agree/ }).check()
   await page.getByRole('button', { name: 'Send Enquiry' }).click()
-  await page.getByText('Almost done — send the email to finish.').waitFor({ timeout: 3000 })
+  await page.getByText(sentText).waitFor({ timeout: 3000 })
 })
 await step('NDIS eligibility check gives a result', async () => {
   await page.goto(base + '/ndis-eligibility/')
@@ -155,6 +183,38 @@ await step('mobile menu opens', async () => {
   await page.locator('#mobile-menu').getByRole('link', { name: 'Podiatry' }).waitFor({ state: 'detached' }).catch(() => {})
   await page.locator('#mobile-menu').getByRole('link', { name: 'Allied Health & Rehabilitation' }).click()
   await page.waitForURL('**/allied-health-services/')
+})
+await step('Careers is in the main menu; Franchise is under About', async () => {
+  await page.setViewportSize({ width: 1024, height: 800 })
+  await page.goto(base + '/')
+  const nav = page.getByRole('navigation', { name: 'Main' })
+  await nav.getByRole('link', { name: 'Careers', exact: true }).click()
+  await page.waitForURL('**/careers/')
+  await nav.getByRole('button', { name: 'About' }).click()
+  await nav.getByRole('link', { name: 'Franchise With Us' }).click()
+  await page.waitForURL('**/franchise-with-us/')
+  await page.setViewportSize({ width: 1440, height: 900 })
+})
+await step('franchise interest form validates and hands off to email', async () => {
+  await page.goto(base + '/franchise-with-us/')
+  const form = page.locator('#express-interest form')
+  await form.getByRole('button', { name: 'Express Your Interest' }).click()
+  await form.getByText('Tell us briefly about your background and preferred location.').waitFor()
+  await form.getByLabel('First name').fill('Sam')
+  await form.getByLabel('Last name').fill('Lee')
+  await form.getByLabel('Phone').fill('0412 345 678')
+  await form.getByLabel('Email', { exact: true }).fill('sam@example.com')
+  await form.getByLabel('Preferred location').selectOption('Western Australia')
+  await form.getByLabel('Your background and goals').fill('Physiotherapist, Perth')
+  await form.getByRole('checkbox', { name: /I agree/ }).check()
+  await form.getByRole('button', { name: 'Express Your Interest' }).click()
+  await page.getByText(sentText).waitFor({ timeout: 3000 })
+})
+await step('footer feedback & complaints section is prominent on every page', async () => {
+  await page.goto(base + '/about-us/')
+  const box = page.locator('footer section[aria-labelledby="footer-feedback-title"]')
+  await box.getByRole('heading', { name: 'Feedback & complaints' }).waitFor()
+  for (const name of [/Give feedback/, /Make a complaint/, /How we handle complaints/]) await box.getByRole('link', { name }).waitFor()
 })
 await step('unknown URL shows 404 page (noindex)', async () => {
   const res = await page.goto(base + '/no-such-page/')

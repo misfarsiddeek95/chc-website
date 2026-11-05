@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { Icons } from '@/components/Icons'
 import EnquiryForm from '@/components/EnquiryForm'
+import { zanda } from '@/content/site'
 
 export type ModalType = 'book' | 'referral' | null
 
@@ -84,6 +85,16 @@ export default function BookModal({ type, onClose }: { type: ModalType; onClose:
               : 'Fill in your details and we will confirm your appointment shortly.'}
           </p>
         </div>
+        {!isReferral && (
+          <a href={zanda.booking} target="_blank" rel="noopener noreferrer" className="mb-5 flex items-center justify-between gap-3 rounded-xl border-2 border-[#27156F] px-4 py-3 text-[#27156F] hover:bg-[#27156F] hover:text-white transition-colors">
+            <span>
+              <span className="block font-semibold text-sm">Book online now</span>
+              <span className="block text-xs opacity-80">Choose a clinician and time in our booking system</span>
+            </span>
+            <Icons.ExternalLink /><span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        )}
+        {!isReferral && <p className="text-xs font-semibold text-gray-600 uppercase tracking-widest mb-3">Or request a call back</p>}
         <EnquiryForm variant={isReferral ? 'referral' : 'book'} compact />
       </div>
     </div>

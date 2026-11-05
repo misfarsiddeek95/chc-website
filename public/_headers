@@ -2,7 +2,7 @@
 # The Next.js server build sets these itself (next.config.ts › securityHeaders).
 # If you set NEXT_PUBLIC_FORM_ENDPOINT, add its origin to connect-src below.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://completehealthcareconnect.com.au; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://completehealthcareconnect.com.au https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://www.google.com; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
   Strict-Transport-Security: max-age=31536000
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

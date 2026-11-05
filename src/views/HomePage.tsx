@@ -6,55 +6,128 @@ import niisqLogo from '@/assets/niisq-logo.png'
 import { Icons } from '@/components/Icons'
 import Link from '@/components/Link'
 import { useSiteUi } from '@/ui-context'
+import { social, videoTestimonials } from '@/content/site'
 
 // ─── Hero slider ─────────────────────────────────────────────────────────────
 
-const heroSlides = [
+// Slide content from the business (Oct 2026), standardised: three eyebrow labels,
+// a three-line heading (the last line, in orange, is the outcome), a one-sentence
+// summary, a "Your… Your… Our…" promise and an "Explore …" button. Slides follow a
+// care journey: rehabilitation, children, disability, supported living, ageing,
+// hospital to home, then care anywhere.
+const unsplash = (id: string) => `https://images.unsplash.com/${id}?w=900&h=1100&fit=crop&auto=format`
+
+const heroSlides: {
+  tab: string
+  badge: string
+  heading: [string, string, string]
+  body: string
+  primaryCta: string
+  primaryTo?: string
+  img: string
+  imgAlt: string
+  imgBg: string
+  panel: string
+  trust: string[]
+}[] = [
   {
     tab: 'Allied health',
-    badge: 'Allied Health · NDIS Registered · South-East Queensland',
-    heading: ['Healthcare', 'that comes', 'to you.'],
-    body: 'Allied health, disability support and in-home care built around your life. Access experienced clinicians at home, in clinic, or via telehealth.',
-    primaryCta: 'Book an Appointment',
-    primaryTo: undefined as string | undefined,
-    img: 'https://images.unsplash.com/photo-1765896387387-0538bc9f997e?w=900&h=1100&fit=crop&auto=format',
-    imgAlt: 'Healthcare worker smiling warmly with elderly patient',
+    badge: 'Allied Health · Injury Rehabilitation · Return to Work',
+    heading: ['Recover stronger.', 'Move better.', 'Do what you love.'],
+    body: 'Physiotherapy, occupational therapy, speech pathology and podiatry for sports and workplace injuries, car accidents, whiplash and chronic conditions, including WorkCover Queensland.',
+    primaryCta: 'Explore Allied Health',
+    primaryTo: '/allied-health-services/',
+    img: unsplash('photo-1709880754472-be89c13abc52'),
+    imgAlt: 'Physiotherapist working with a client during a rehabilitation session',
+    imgBg: '#d4e4f7',
+    panel: '#E8F0FF',
+    trust: ['Your recovery', 'Your goals', 'Our expertise'],
+  },
+  {
+    tab: 'Paediatrics',
+    badge: 'Paediatric Therapy · Early Intervention · Autism & ADHD',
+    heading: ['Early support.', 'Brighter futures.', 'Lasting impact.'],
+    body: 'Occupational therapy, speech pathology and physiotherapy helping children with autism, ADHD, developmental delays and cerebral palsy build communication, movement and everyday skills.',
+    primaryCta: 'Explore Paediatric Therapy',
+    primaryTo: '/early-intervention/',
+    img: unsplash('photo-1758273241260-f49172d876e3'),
+    imgAlt: 'Therapist playing with a young child during a therapy session',
+    imgBg: '#f7ecd4',
+    panel: '#FFF8E8',
+    trust: ['Every child', 'Every milestone', 'Every possibility'],
+  },
+  {
+    tab: 'Disability',
+    badge: 'Disability Support · Community Nursing · Rehabilitation',
+    heading: ['Personalised care.', 'Every ability.', 'Better lives.'],
+    body: 'Registered NDIS and NIISQ provider delivering disability support, allied health, community nursing and in-home care across South East Queensland, plus DVA Community Nursing for veterans.',
+    primaryCta: 'Explore Disability Services',
+    primaryTo: '/ndis-services/',
+    img: unsplash('photo-1764006145420-df3006edf060'),
+    imgAlt: 'Healthcare professional with a client in a wheelchair',
     imgBg: '#ddd4f7',
     panel: '#F0EDFF',
-    trust: ['NDIS Registered', 'Mobile & Clinic', 'Telehealth Available', 'Multiple Locations'],
+    trust: ['Your goals', 'Your choice', 'Our support'],
   },
   {
-    tab: 'Home & community care',
-    badge: 'Home & Community Care · In-Home Support',
-    heading: ['Support for', 'everyday', 'life.'],
-    body: 'Practical, compassionate in-home care helping you live safely and independently — from daily living assistance to community nursing and transport.',
-    primaryCta: 'Explore Home Care',
-    primaryTo: '/home-community-support/',
-    img: 'https://images.unsplash.com/photo-1773227055624-07b515ba87c5?w=900&h=1100&fit=crop&auto=format',
-    imgAlt: 'Caregiver assisting elderly woman with walker at home',
-    imgBg: '#f0eddf',
-    panel: '#F5F2EC',
-    trust: ['Community Nursing', 'Meal Preparation', 'Daily Living Support', 'Medication Management'],
-  },
-  {
-    tab: 'Supported accommodation',
-    badge: 'Supported Accommodation · SIL · SDA · Respite',
-    heading: ['A place to live.', 'Support to', 'thrive.'],
-    body: 'Purpose-built and supported housing that promotes independence, wellbeing and quality of life for Australians living with disability.',
-    primaryCta: 'Explore Accommodation',
+    tab: 'Supported living',
+    badge: 'Supported Living · SIL, SDA & ILO · 24/7 Support',
+    heading: ['Call it home.', '24/7 support.', 'Room to thrive.'],
+    body: 'Supported Independent Living (SIL) in Logan, Specialist Disability Accommodation (SDA) in Marsden and Individualised Living Options (ILO), backed by allied health professionals and nurses.',
+    primaryCta: 'Explore Supported Living',
     primaryTo: '/housing-living-support/',
-    img: 'https://images.unsplash.com/photo-1756312177451-aeb00d6e179a?w=900&h=1100&fit=crop&auto=format',
+    img: unsplash('photo-1756312177451-aeb00d6e179a'),
     imgAlt: 'Woman in wheelchair smiling outdoors near supported accommodation',
     imgBg: '#d4e4f7',
     panel: '#E8F0FF',
-    trust: ['SIL', 'SDA', 'STA / Respite', '24/7 Support'],
+    trust: ['Your home', 'Your choice', 'Our team'],
+  },
+  {
+    tab: 'Aged care',
+    badge: 'Aged Care · Support at Home · Restorative Care',
+    heading: ['Regain strength.', 'Stay independent.', 'Live well at home.'],
+    body: 'Nursing, allied health and in-home support for older Australians through Support at Home, the Commonwealth Home Support Programme (CHSP), Transition Care, respite and DVA nursing.',
+    primaryCta: 'Explore Aged Care',
+    primaryTo: '/aged-care-services/',
+    img: unsplash('photo-1773227055624-07b515ba87c5'),
+    imgAlt: 'Caregiver assisting elderly woman with walker at home',
+    imgBg: '#f0eddf',
+    panel: '#F5F2EC',
+    trust: ['Your comfort', 'Your independence', 'Our commitment'],
+  },
+  {
+    tab: 'Hospital to home',
+    badge: 'Maintenance in the Home · Hospital Discharge · Transitional Care',
+    heading: ['Leaving hospital.', 'Recover at home.', 'Fully supported.'],
+    body: 'Medically supervised care for patients leaving hospital, with medical oversight, nursing, personal care and transport across Greater Brisbane while longer-term care is arranged.',
+    primaryCta: 'Explore Hospital to Home',
+    primaryTo: '/maintenance-in-the-home/',
+    img: unsplash('photo-1765896387387-0538bc9f997e'),
+    imgAlt: 'Healthcare worker smiling warmly with elderly patient',
+    imgBg: '#ddd4f7',
+    panel: '#F0EDFF',
+    trust: ['Your recovery', 'Your home', 'Our continuity of care'],
+  },
+  {
+    tab: 'Telehealth',
+    badge: 'Telehealth · OT, Speech & Medical · Australia-wide',
+    heading: ['Wherever you live.', 'Expert care.', 'No long journeys.'],
+    body: 'Occupational therapy, speech pathology and medical consultations by telehealth for children and adults across Australia, including assessments, therapy and NDIS support.',
+    primaryCta: 'Explore Telehealth',
+    primaryTo: '/allied-health-services/#therapy-options',
+    img: unsplash('photo-1773227059784-c1e36cc8c8c9'),
+    imgAlt: 'Two women enjoying time together at home',
+    imgBg: '#e4f0d4',
+    panel: '#E8F5E8',
+    trust: ['Your location', 'Your goals', 'Our care, Australia-wide'],
   },
 ]
 
-const headingColors = ['text-[#1a1238]', 'text-[#27156F]', 'text-[#FF9D00]']
+// Third line uses a deeper brand orange: #FF9D00 is 2:1 on the cream hero, #C76E00 meets 3:1 for large text.
+const headingColors = ['text-[#1a1238]', 'text-[#27156F]', 'text-[#C76E00]']
 
 const heroPrimaryCls =
-  'flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]'
+  'flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]'
 
 const heroStats = [
   { value: '30+', label: 'Clinicians', tone: 'light', pos: '-left-4 md:-left-8 top-16', delay: '0s', icon: 'users' },
@@ -72,9 +145,27 @@ function StatIcon({ name }: { name: string }) {
 }
 
 /**
+ * True while the element is at least partly on screen. Auto-advancing sections use
+ * it to stop changing (and changing height) while the visitor reads further down.
+ */
+function useInView<T extends Element>() {
+  const ref = useRef<T>(null)
+  const [inView, setInView] = useState(true)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting))
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  return [ref, inView] as const
+}
+
+/**
  * Homepage hero carousel. Slides advance when the timer bar fills (6s); it pauses on
- * hover, focus, or with the pause button, and never auto-advances for people who
- * prefer reduced motion (the timer animation is turned off). Swipe and ←/→ keys work.
+ * hover, focus, with the pause button or while scrolled out of view, and never
+ * auto-advances for people who prefer reduced motion (the timer animation is turned
+ * off). Swipe and ←/→ keys work.
  */
 export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void; onChat: () => void; initialSlide?: number }) {
   const [active, setActive] = useState(initialSlide)
@@ -86,10 +177,12 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
   const next = useCallback(() => go(active + 1), [go, active])
   const prev = useCallback(() => go(active - 1), [go, active])
   const slide = heroSlides[active]
-  const running = !paused && !holding
+  const [sectionRef, inView] = useInView<HTMLElement>()
+  const running = !paused && !holding && inView
 
   return (
     <section
+      ref={sectionRef}
       aria-roledescription="carousel"
       aria-label="Highlights"
       className="relative bg-[#FAFAF7] overflow-hidden"
@@ -118,12 +211,12 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
         <div className="grid md:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-center">
           {/* Copy */}
           <div>
-            <div key={active} role="group" aria-roledescription="slide" aria-label={`${active + 1} of ${count}: ${slide.tab}`} className="space-y-7">
+            <div key={active} role="group" aria-roledescription="slide" aria-label={`${active + 1} of ${count}: ${slide.tab}`} className="space-y-7 md:min-h-[830px] lg:min-h-0">
               <p className="hero-in inline-flex items-center gap-2 bg-[#27156F]/8 text-[#27156F] text-xs font-semibold px-4 py-2 rounded-full">
                 <span aria-hidden="true" className="w-2 h-2 rounded-full bg-[#FF9D00] inline-block flex-shrink-0" />
                 {slide.badge}
               </p>
-              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.05]">
+              <h1 className="font-display text-4xl md:text-5xl xl:text-[56px] font-bold leading-[1.08]">
                 {slide.heading.map((line, i) => (
                   <span key={i} className={`hero-in block ${headingColors[i]} ${i === 2 ? 'font-extrabold relative w-fit' : ''}`} style={{ animationDelay: `${80 + i * 90}ms` }}>
                     {line}
@@ -135,9 +228,9 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
                   </span>
                 ))}
               </h1>
-              <p className="hero-in text-gray-600 text-lg md:text-xl leading-relaxed max-w-md" style={{ animationDelay: '380ms' }}>{slide.body}</p>
+              <p className="hero-in text-gray-600 text-lg leading-relaxed max-w-lg" style={{ animationDelay: '380ms' }}>{slide.body}</p>
               <div className="hero-in flex flex-wrap gap-3" style={{ animationDelay: '460ms' }}>
-                {/* Slides that lead to a page use a real link (crawlable, opens in a new tab); the first opens the booking dialog. */}
+                {/* Slides that lead to a page use a real link (crawlable, can be opened in a new tab); a slide without a page opens the booking dialog. */}
                 {slide.primaryTo ? (
                   <Link to={slide.primaryTo} className={heroPrimaryCls}>
                     {slide.primaryCta}
@@ -170,7 +263,7 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
 
             {/* Slide tabs with timer bars */}
             <div className="mt-10 flex items-end gap-4">
-              <div className="grid grid-cols-3 gap-3 flex-1 max-w-lg">
+              <div className="grid grid-cols-7 gap-2 flex-1 max-w-lg">
                 {heroSlides.map((s, i) => (
                   <button
                     key={s.tab}
@@ -183,7 +276,6 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
                   >
                     <span className={`flex items-baseline gap-2 transition-colors ${i === active ? 'text-[#27156F]' : 'text-gray-500 group-hover:text-[#27156F]'}`}>
                       <span className="font-display text-sm font-bold">{String(i + 1).padStart(2, '0')}</span>
-                      <span className="text-xs font-semibold leading-tight hidden sm:inline">{s.tab}</span>
                     </span>
                     <span className="mt-2 block h-1 rounded-full bg-[#27156F]/12 overflow-hidden">
                       {i === active && (
@@ -199,15 +291,15 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
                 ))}
               </div>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={prev} aria-label="Previous slide" className="w-10 h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
+                <button type="button" onClick={prev} aria-label="Previous slide" className="w-12 h-12 md:w-10 md:h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
-                <button type="button" onClick={() => setPaused(p => !p)} aria-label={paused ? 'Play slideshow' : 'Pause slideshow'} aria-pressed={paused} className="w-10 h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
+                <button type="button" onClick={() => setPaused(p => !p)} aria-label={paused ? 'Play slideshow' : 'Pause slideshow'} aria-pressed={paused} className="w-12 h-12 md:w-10 md:h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
                   {paused
                     ? <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"/></svg>
                     : <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="4.5" height="16" rx="1"/><rect x="14.5" y="4" width="4.5" height="16" rx="1"/></svg>}
                 </button>
-                <button type="button" onClick={next} aria-label="Next slide" className="w-10 h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
+                <button type="button" onClick={next} aria-label="Next slide" className="w-12 h-12 md:w-10 md:h-10 rounded-full border-2 border-[#27156F]/20 flex items-center justify-center text-[#27156F] hover:bg-[#27156F] hover:text-white hover:border-[#27156F] transition-all">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
               </div>
@@ -249,9 +341,9 @@ export function Hero({ onBook, onChat, initialSlide = 0 }: { onBook: () => void;
                   background: s.tone === 'brand' ? 'rgba(39,21,111,0.8)' : s.tone === 'accent' ? 'rgba(255,157,0,0.85)' : 'rgba(255,255,255,0.85)',
                 }}
               >
-                <span className={`block mb-2 ${s.tone === 'light' ? 'text-[#27156F]' : 'text-white/80'}`}><StatIcon name={s.icon} /></span>
-                <div className={`font-display text-3xl font-bold ${s.tone === 'light' ? 'text-[#27156F]' : 'text-white'}`}>{s.value}</div>
-                <div className={`text-xs font-medium mt-0.5 ${s.tone === 'light' ? 'text-gray-600' : 'text-white/90'}`}>{s.label}</div>
+                <span className={`block mb-2 ${s.tone === 'light' ? 'text-[#27156F]' : s.tone === 'accent' ? 'text-[#1a1238]/80' : 'text-white/80'}`}><StatIcon name={s.icon} /></span>
+                <div className={`font-display text-3xl font-bold ${s.tone === 'light' ? 'text-[#27156F]' : s.tone === 'accent' ? 'text-[#1a1238]' : 'text-white'}`}>{s.value}</div>
+                <div className={`text-xs font-medium mt-0.5 ${s.tone === 'light' ? 'text-gray-600' : s.tone === 'accent' ? 'text-[#1a1238]' : 'text-white/90'}`}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -336,7 +428,7 @@ const serviceGroups = [
     desc: 'Safe, supported SIL/SDA housing that promotes independence, wellbeing and quality of life for Australians living with disability.',
     img: 'https://images.unsplash.com/photo-1756312177451-aeb00d6e179a?w=600&h=400&fit=crop&auto=format',
     color: '#F0EDFF',
-    subServices: ['SIL — Supported Independent Living', 'SDA — Specialist Disability Accommodation', 'STA / Respite', 'MTA & ILO'],
+    subServices: ['SIL — Supported Independent Living', 'SDA — Specialist Disability Accommodation', 'ILO — Individualised Living Options', '24/7 Support'],
   },
   {
     id: 'maintenance',
@@ -456,7 +548,7 @@ function HomeCare() {
             <div aria-hidden="true" className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-xl p-5 hidden md:block">
               <p className="text-[#27156F] font-display font-bold text-2xl">7</p>
               <p className="text-gray-500 text-xs font-medium mt-0.5">Support services</p>
-              <p className="text-gray-400 text-xs">in your home</p>
+              <p className="text-gray-600 text-xs">in your home</p>
             </div>
           </div>
 
@@ -500,12 +592,12 @@ function HomeCare() {
 // ─── Supported Accommodation ──────────────────────────────────────────────────
 
 const accommodationTypes = [
-  { label: 'Supported Independent Living', abbr: 'SIL' },
-  { label: 'Specialist Disability Accommodation', abbr: 'SDA' },
-  { label: 'Short-Term Accommodation / Respite', abbr: 'STA' },
-  { label: 'Medium-Term Accommodation', abbr: 'MTA' },
+  { label: 'Supported Independent Living · Logan', abbr: 'SIL' },
+  { label: 'Specialist Disability Accommodation · Marsden', abbr: 'SDA' },
   { label: 'Individualised Living Options', abbr: 'ILO' },
-  { label: '24/7 Support & Complex Care', abbr: '24/7' },
+  { label: '24-hour support where required and funded', abbr: '24/7' },
+  { label: 'Registered nursing & clinical oversight', abbr: 'RN' },
+  { label: 'Allied health professionals on hand', abbr: 'AH' },
 ]
 
 function Accommodation() {
@@ -526,17 +618,17 @@ function Accommodation() {
             <div>
               <p className="eyebrow text-[#FF9D00] text-sm font-semibold tracking-widest uppercase mb-3">Supported Accommodation</p>
               <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-4">
-                A place to live.<br />Support to thrive.
+                A place to call home.<br />24/7 support to thrive.
               </h2>
               <p className="text-white/70 text-lg leading-relaxed">
-                Purpose-built and supported housing that promotes independence, wellbeing and quality of life for Australians living with disability.
+                Supported Independent Living in Logan, Specialist Disability Accommodation and Individualised Living Options, with a dedicated 24-hour support team backed by allied health professionals and community nurses.
               </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {accommodationTypes.map(type => (
                 <div key={type.abbr} data-reveal className="flex items-center gap-3 bg-white/8 border border-white/10 rounded-xl p-4 hover:bg-white/12 transition-colors">
-                  <span className="w-10 h-10 rounded-lg bg-[#FF9D00]/20 text-[#FF9D00] font-display font-bold text-xs flex items-center justify-center flex-shrink-0">
+                  <span className="w-10 h-10 rounded-lg bg-[#FF9D00]/20 text-[#FFBE55] font-display font-bold text-xs flex items-center justify-center flex-shrink-0">
                     {type.abbr}
                   </span>
                   <span className="text-sm text-white/80 font-medium">{type.label}</span>
@@ -546,7 +638,7 @@ function Accommodation() {
 
             <Link
               to="/housing-living-support/"
-              className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-7 py-4 rounded-xl text-sm transition-colors"
+              className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl text-sm transition-colors"
             >
               Explore Supported Accommodation
               <Icons.ArrowRight />
@@ -626,7 +718,6 @@ const audiences = [
 
 function WhoWeHelp({ onBook }: { onBook: () => void }) {
   const [active, setActive] = useState(0)
-  const current = audiences[active]
 
   return (
     <section id="who-we-help" className="py-20 md:py-28 bg-white">
@@ -644,7 +735,7 @@ function WhoWeHelp({ onBook }: { onBook: () => void }) {
               key={a.label}
               type="button"
               aria-pressed={active === i}
-              aria-controls="who-we-help-panel"
+              aria-controls={`who-we-help-panel-${i}`}
               onClick={() => setActive(i)}
               className={`audience-chip px-4 py-2.5 rounded-full text-sm font-medium border transition-all ${
                 active === i
@@ -658,33 +749,42 @@ function WhoWeHelp({ onBook }: { onBook: () => void }) {
           ))}
         </div>
 
-        {/* Detail panel */}
-        <div key={active} id="who-we-help-panel" aria-live="polite" className="fade-swap bg-[#FAFAF7] rounded-3xl p-8 md:p-12 grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <div aria-hidden="true" className="text-4xl mb-4">{current.icon}</div>
-            <h3 className="font-display text-3xl font-bold text-[#1a1238] mb-4">{current.label}</h3>
-            <p className="text-gray-600 text-lg leading-relaxed mb-6">{current.desc}</p>
-            <button
-              type="button"
-              onClick={onBook}
-              className="flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
-            >
-              Book an Appointment
-              <Icons.ArrowRight />
-            </button>
+        {/* Detail panels: all are in the HTML (for search and AI crawlers); only the chosen one is shown. */}
+        {audiences.map((a, i) => (
+          <div
+            key={a.label}
+            id={`who-we-help-panel-${i}`}
+            role="region"
+            aria-label={a.label}
+            hidden={active !== i}
+            className={`${active === i ? 'fade-swap ' : ''}bg-[#FAFAF7] rounded-3xl p-8 md:p-12 grid md:grid-cols-2 gap-10 items-center`}
+          >
+            <div>
+              <div aria-hidden="true" className="text-4xl mb-4">{a.icon}</div>
+              <h3 className="font-display text-3xl font-bold text-[#1a1238] mb-4">{a.label}</h3>
+              <p className="text-gray-600 text-lg leading-relaxed mb-6">{a.desc}</p>
+              <button
+                type="button"
+                onClick={onBook}
+                className="flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
+              >
+                Book an Appointment
+                <Icons.ArrowRight />
+              </button>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-gray-500 tracking-widest uppercase mb-4">Relevant services</p>
+              <ul className="space-y-3">
+                {a.services.map(s => (
+                  <li key={s} className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-gray-100 shadow-sm">
+                    <span className="text-[#27156F]"><Icons.Check /></span>
+                    <span className="text-[#1a1238] font-medium text-sm">{s}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-500 tracking-widest uppercase mb-4">Relevant services</p>
-            <ul className="space-y-3">
-              {current.services.map(s => (
-                <li key={s} className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-gray-100 shadow-sm">
-                  <span className="text-[#27156F]"><Icons.Check /></span>
-                  <span className="text-[#1a1238] font-medium text-sm">{s}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   )
@@ -720,10 +820,11 @@ function useCountUp(target: number, duration: number, running: boolean) {
 const formatNumber = (n: number) => n.toLocaleString('en-AU')
 
 const stats = [
+  // Confirmed by the business (Nov 2026). A client count was not confirmed, so it isn't shown.
   { value: 30, suffix: '+', label: 'Clinicians' },
-  { value: 50, suffix: '+', label: 'Support Workers' },
-  { value: 5, suffix: '', label: 'Locations' },
-  { value: 10000, suffix: '+', label: 'Clients Supported' },
+  { value: 50, suffix: '+', label: 'Support Workers & Carers' },
+  { value: 3, suffix: '', label: 'Clinics in SEQ' },
+  { value: 5, suffix: '', label: 'States Served' },
 ]
 
 const differentiators = [
@@ -915,6 +1016,7 @@ const testimonials = [
   {
     name: 'Margaret T.',
     service: 'Home & Community Care',
+    location: 'Logan', // MOCK suburb: confirm with the business
     text: "The team from CHC has been absolutely wonderful. They helped Mum regain her independence after her hip replacement. Genuinely caring, professional and always on time.",
     stars: 5,
     avatar: 'https://images.unsplash.com/photo-1773227059784-c1e36cc8c8c9?w=100&h=100&fit=crop&auto=format',
@@ -922,6 +1024,7 @@ const testimonials = [
   {
     name: 'James K.',
     service: 'Physiotherapy',
+    location: 'Ipswich', // MOCK suburb
     text: "After my accident I thought I'd never be back to normal. The physio team at CHC were fantastic — patient, knowledgeable and really listened to what I needed.",
     stars: 5,
     avatar: 'https://images.unsplash.com/photo-1704475686860-ab71b444df6b?w=100&h=100&fit=crop&auto=format',
@@ -929,15 +1032,46 @@ const testimonials = [
   {
     name: 'Sarah L., Support Coordinator',
     service: 'NDIS / Supported Accommodation',
+    location: 'North Lakes', // MOCK suburb
     text: "As a support coordinator I've worked with many providers. CHC stands out for their responsiveness, communication and genuine commitment to participants. Highly recommend.",
     stars: 5,
     avatar: 'https://images.unsplash.com/photo-1765896387387-0538bc9f997e?w=100&h=100&fit=crop&auto=format',
   },
 ]
 
+/**
+ * YouTube video shown as a thumbnail first, so no YouTube code or cookies load until the
+ * visitor presses play (faster pages, privacy-friendly). Plays from youtube-nocookie.com.
+ */
+function VideoCard({ id, title }: { id: string; title: string }) {
+  const [playing, setPlaying] = useState(false)
+  return (
+    <div className="relative aspect-video rounded-2xl overflow-hidden bg-[#1a1238] shadow-sm">
+      {playing ? (
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`}
+          title={title}
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="absolute inset-0 w-full h-full"
+        />
+      ) : (
+        <button type="button" onClick={() => setPlaying(true)} className="group absolute inset-0 w-full h-full">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" />
+          <span className="absolute inset-0 bg-gradient-to-t from-[#1a1238]/70 to-transparent" />
+          <span aria-hidden="true" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-[#FF9D00] text-[#1a1238] flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+            <svg viewBox="0 0 24 24" className="w-7 h-7 ml-1" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+          </span>
+          <span className="absolute left-4 bottom-3 text-white text-sm font-semibold">Play video: {title}</span>
+        </button>
+      )}
+    </div>
+  )
+}
+
 function Testimonials() {
   const [active, setActive] = useState(0)
-  const t = testimonials[active]
 
   return (
     <section className="py-20 md:py-28 bg-[#FAFAF7]">
@@ -945,14 +1079,16 @@ function Testimonials() {
         <p className="eyebrow text-[#9e5c00] text-sm font-semibold tracking-widest uppercase mb-3">Testimonials</p>
         <h2 className="font-display text-4xl md:text-5xl font-bold text-[#1a1238] mb-12">Care that makes<br />a difference.</h2>
 
-        <div key={active} data-reveal className="fade-swap bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-left relative">
+        {/* Every testimonial is in the HTML; only the chosen one is shown. */}
+        {testimonials.map((t, ti) => (
+        <figure key={t.name} hidden={active !== ti} data-reveal className={`${active === ti ? 'fade-swap ' : ''}bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 text-left relative`}>
           <div className="flex gap-1 mb-6" role="img" aria-label={`${t.stars} out of 5 stars`}>
             {Array.from({ length: t.stars }).map((_, i) => <Icons.Star key={i} />)}
           </div>
           <blockquote className="font-display text-xl md:text-2xl font-medium text-[#1a1238] leading-relaxed mb-8 italic">
             “{t.text}”
           </blockquote>
-          <div className="flex items-center gap-4">
+          <figcaption className="flex items-center gap-4">
             <Image
               src={t.avatar}
               alt=""
@@ -962,26 +1098,43 @@ function Testimonials() {
             />
             <div>
               <p className="font-semibold text-[#1a1238] text-sm">{t.name}</p>
-              <p className="text-gray-400 text-xs">{t.service}</p>
+              <p className="text-gray-600 text-xs">{t.service} · {t.location}</p>
             </div>
-          </div>
+          </figcaption>
           <div aria-hidden="true" className="absolute top-8 right-8 text-[#27156F]/10 font-display text-8xl font-bold leading-none select-none">
             “
           </div>
-        </div>
+        </figure>
+        ))}
 
-        <div className="flex gap-2 justify-center mt-6">
+        <div className="flex gap-1 justify-center mt-5">
           {testimonials.map((item, i) => (
             <button
               key={item.name}
               type="button"
               aria-pressed={active === i}
               onClick={() => setActive(i)}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${active === i ? 'bg-[#27156F] w-8' : 'bg-gray-300'}`}
+              className="h-12 min-w-12 md:h-6 md:min-w-6 flex items-center justify-center"
               aria-label={`Go to testimonial ${i + 1}`}
-            />
+            >
+              {/* 24px hit area around the small dot (WCAG 2.2 target size). */}
+              <span aria-hidden="true" className={`block h-2.5 rounded-full transition-all ${active === i ? 'bg-[#27156F] w-8' : 'bg-gray-300 w-2.5'}`} />
+            </button>
           ))}
         </div>
+      </div>
+
+      {/* Client video stories (shared with consent). */}
+      <div className="max-w-6xl mx-auto px-6 mt-16">
+        <h3 className="font-display text-2xl font-bold text-[#1a1238] text-center mb-8">Hear it from our clients</h3>
+        <ul className="grid md:grid-cols-3 gap-6">
+          {videoTestimonials.map(v => <li key={v.id}><VideoCard id={v.id} title={v.title} /></li>)}
+        </ul>
+        <p className="text-center mt-6">
+          <a href={social.find(x => x.label === 'YouTube')?.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#27156F] underline underline-offset-4 hover:text-[#9e5c00]">
+            More videos on our YouTube channel<span className="sr-only"> (opens in a new tab)</span> <Icons.ExternalLink />
+          </a>
+        </p>
       </div>
     </section>
   )
@@ -1012,7 +1165,7 @@ function Referrals() {
             </div>
             <Link
               to="/referrals/"
-              className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-orange-900/30"
+              className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-orange-900/30"
             >
               Start a Referral
               <Icons.ArrowRight />
@@ -1086,7 +1239,7 @@ function OperationalForms() {
                 href={form.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-6 py-4 rounded-xl transition-colors"
+                className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-4 rounded-xl transition-colors"
               >
                 <span>{form.action}<span className="sr-only"> (opens in a new tab)</span></span>
                 <Icons.ExternalLink />
@@ -1101,60 +1254,93 @@ function OperationalForms() {
 
 // ─── Locations ────────────────────────────────────────────────────────────────
 
-const locations = [
+// Brisbane lists the three clinics. There are no clinics in other states (business
+// answer, Nov 2026): CHC provides in-home support and telehealth there.
+type LocationItem = { name: string; area: string; to?: string }
+const telehealth: LocationItem = { name: 'Telehealth', area: 'OT, speech pathology & medical consults' }
+
+const locations: {
+  name: string
+  subtitle: string
+  address: string
+  services: string[]
+  list: { eyebrow: string; title: string; note: string; items: LocationItem[] }
+}[] = [
   {
     name: 'South East Queensland',
     subtitle: 'Brisbane Clinics',
-    address: 'Logan Central · Booval (Ipswich) · North Lakes · Capalaba · Cannon Hill',
+    address: 'Logan Central · Booval (Ipswich) · North Lakes',
     services: ['Allied Health', 'NDIS', 'Home Care', 'Early Intervention'],
-    highlight: true,
-    clinics: [
-      { name: 'Logan Central', area: 'Brisbane South' },
-      { name: 'Booval', area: 'Ipswich' },
-      { name: 'North Lakes', area: 'Brisbane North' },
-      { name: 'Capalaba', area: 'Redlands' },
-      { name: 'Cannon Hill', area: 'Brisbane East' },
-    ],
+    list: {
+      eyebrow: 'Visit us in Brisbane',
+      title: 'Our three clinics',
+      note: 'Clinic and mobile appointments available',
+      items: [
+        { name: 'Logan Central', area: 'Brisbane South', to: '/locations/logan-central/' },
+        { name: 'Booval', area: 'Ipswich', to: '/locations/booval/' },
+        { name: 'North Lakes', area: 'Brisbane North', to: '/locations/north-lakes/' },
+      ],
+    },
   },
   {
     name: 'Sydney',
     subtitle: 'New South Wales',
     address: 'Greater Sydney region',
-    services: ['Allied Health', 'NDIS', 'Telehealth'],
-    highlight: false,
-    clinics: [],
+    services: ['In-home support', 'NDIS', 'Telehealth'],
+    list: {
+      eyebrow: 'Serving New South Wales',
+      title: 'Where we support you',
+      note: 'No clinic here: in-home support and telehealth',
+      items: [{ name: 'Sydney', area: 'Home & community services' }, { name: 'Greater Sydney', area: 'Home & community services' }, telehealth],
+    },
   },
   {
     name: 'Melbourne',
     subtitle: 'Victoria',
     address: 'Greater Melbourne region',
-    services: ['Allied Health', 'NDIS', 'Telehealth'],
-    highlight: false,
-    clinics: [],
+    services: ['In-home support', 'NDIS', 'Telehealth'],
+    list: {
+      eyebrow: 'Serving Victoria',
+      title: 'Where we support you',
+      note: 'No clinic here: in-home support and telehealth',
+      items: [{ name: 'Melbourne', area: 'Home & community services' }, { name: 'Greater Melbourne', area: 'Home & community services' }, telehealth],
+    },
   },
   {
     name: 'Adelaide',
     subtitle: 'South Australia',
     address: 'Greater Adelaide region',
-    services: ['Allied Health', 'NDIS', 'Telehealth'],
-    highlight: false,
-    clinics: [],
+    services: ['In-home support', 'NDIS', 'Telehealth'],
+    list: {
+      eyebrow: 'Serving South Australia',
+      title: 'Where we support you',
+      note: 'No clinic here: in-home support and telehealth',
+      items: [{ name: 'Adelaide', area: 'Home & community services' }, { name: 'Surrounding suburbs', area: 'Home & community services' }, telehealth],
+    },
   },
   {
     name: 'Perth',
     subtitle: 'Western Australia',
     address: 'Greater Perth region',
-    services: ['Allied Health', 'NDIS', 'Telehealth'],
-    highlight: false,
-    clinics: [],
+    services: ['In-home support', 'NDIS', 'Telehealth'],
+    list: {
+      eyebrow: 'Serving Western Australia',
+      title: 'Where we support you',
+      note: 'No clinic here: in-home support and telehealth',
+      items: [{ name: 'Perth', area: 'Home & community services' }, { name: 'Surrounding suburbs', area: 'Home & community services' }, telehealth],
+    },
   },
   {
     name: 'Townsville',
     subtitle: 'North Queensland',
     address: 'Townsville & surrounds',
-    services: ['Allied Health', 'Home Care', 'NDIS'],
-    highlight: false,
-    clinics: [],
+    services: ['In-home support', 'NDIS', 'Telehealth'],
+    list: {
+      eyebrow: 'Serving North Queensland',
+      title: 'Where we support you',
+      note: 'No clinic here: in-home support and telehealth',
+      items: [{ name: 'Townsville', area: 'Home & community services' }, { name: 'Cairns', area: 'Home & community services' }, telehealth],
+    },
   },
 ]
 
@@ -1162,23 +1348,23 @@ const LOCATION_INTERVAL_MS = 6000
 
 /**
  * City tabs with an auto-advancing card, as in the design. The rotation pauses while
- * the pointer or keyboard focus is inside the section, restarts its 6s count after a
- * manual choice, and is off for people who prefer reduced motion. Arrow keys,
- * Home and End move between the tabs.
+ * the pointer or keyboard focus is inside the section or it is scrolled out of view,
+ * restarts its 6s count after a manual choice, and is off for people who prefer
+ * reduced motion. Arrow keys, Home and End move between the tabs.
  */
 export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; initialIndex?: number }) {
   const [active, setActive] = useState(initialIndex)
   const [holding, setHolding] = useState(false)
+  const [sectionRef, inView] = useInView<HTMLElement>()
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const location = locations[active]
   const count = locations.length
 
   useEffect(() => {
-    if (holding || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (holding || !inView || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     // `active` is a dependency so a manual choice restarts the full interval.
     const timer = window.setTimeout(() => setActive(current => (current + 1) % count), LOCATION_INTERVAL_MS)
     return () => window.clearTimeout(timer)
-  }, [active, holding, count])
+  }, [active, holding, inView, count])
 
   const show = (index: number) => setActive(((index % count) + count) % count)
   const showPrevious = () => show(active - 1)
@@ -1199,6 +1385,7 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
 
   return (
     <section
+      ref={sectionRef}
       id="locations"
       aria-labelledby="locations-title"
       className="py-20 md:py-28 bg-white"
@@ -1223,7 +1410,7 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
               role="tab"
               id={`location-tab-${index}`}
               aria-selected={active === index}
-              aria-controls="location-panel"
+              aria-controls={`location-panel-${index}`}
               tabIndex={active === index ? 0 : -1}
               onClick={() => show(index)}
               onKeyDown={onTabKey}
@@ -1238,10 +1425,11 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
           ))}
         </div>
 
-        <div id="location-panel" role="tabpanel" aria-labelledby={`location-tab-${active}`}>
+        {locations.map((location, li) => (
+        <div key={location.name} id={`location-panel-${li}`} role="tabpanel" aria-labelledby={`location-tab-${li}`} hidden={active !== li}>
           <div className="bg-[#27156F] text-white rounded-3xl p-7 md:p-10 overflow-hidden relative">
             <div aria-hidden="true" className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#FF9D00]/10 translate-x-1/3 -translate-y-1/3" />
-            <div key={active} className="fade-swap relative grid lg:grid-cols-[1fr_auto] gap-8 items-start">
+            <div className={`${active === li ? 'fade-swap ' : ''}relative grid lg:grid-cols-[1fr_auto] gap-8 items-start`}>
               <div>
                 <div aria-hidden="true" className="w-11 h-11 rounded-xl bg-white/15 text-white flex items-center justify-center mb-5">
                   <Icons.MapPin />
@@ -1262,16 +1450,16 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
                 <button
                   type="button"
                   onClick={onBook}
-                  className="bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-6 py-3.5 rounded-xl transition-colors whitespace-nowrap"
+                  className="bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3.5 rounded-xl transition-colors whitespace-nowrap"
                 >
                   Book an Appointment
                 </button>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={showPrevious} aria-label="Previous city" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
+                  <button type="button" onClick={showPrevious} aria-label="Previous city" className="w-12 h-12 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
                     <span className="rotate-180"><Icons.ArrowRight /></span>
                   </button>
-                  <span className="text-white/60 text-xs font-semibold px-1">{active + 1} / {count}</span>
-                  <button type="button" onClick={showNext} aria-label="Next city" className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
+                  <span className="text-white/60 text-xs font-semibold px-1">{li + 1} / {count}</span>
+                  <button type="button" onClick={showNext} aria-label="Next city" className="w-12 h-12 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
                     <Icons.ArrowRight />
                   </button>
                 </div>
@@ -1279,31 +1467,30 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
             </div>
           </div>
 
-          {location.clinics.length > 0 && (
-            <div className="mt-8">
-              <div className="flex items-end justify-between gap-4 mb-5">
-                <div>
-                  <p className="eyebrow text-[#9e5c00] text-xs font-semibold uppercase tracking-widest mb-1">Visit us in Brisbane</p>
-                  <h3 className="font-display text-2xl font-bold text-[#1a1238]">Our five clinics</h3>
-                </div>
-                <p className="hidden md:block text-gray-500 text-sm">Clinic and mobile appointments available</p>
+          <div className="mt-8">
+            <div className="flex items-end justify-between gap-4 mb-5">
+              <div>
+                <p className="eyebrow text-[#9e5c00] text-xs font-semibold uppercase tracking-widest mb-1">{location.list.eyebrow}</p>
+                <h3 className="font-display text-2xl font-bold text-[#1a1238]">{location.list.title}</h3>
               </div>
-              <ul className="grid md:grid-cols-3 gap-4">
-                {location.clinics.map((clinic, index) => (
-                  <li key={clinic.name} className="rounded-2xl border border-gray-100 bg-[#FAFAF7] p-5 flex items-center gap-4">
-                    <span aria-hidden="true" className="w-10 h-10 rounded-xl bg-[#27156F]/8 text-[#27156F] flex items-center justify-center font-display font-bold text-sm">
-                      0{index + 1}
-                    </span>
-                    <div>
-                      <h4 className="font-display font-bold text-[#1a1238]">{clinic.name}</h4>
-                      <p className="text-gray-500 text-sm">{clinic.area}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <p className="hidden md:block text-gray-500 text-sm">{location.list.note}</p>
             </div>
-          )}
+            <ul className="grid md:grid-cols-3 gap-4">
+              {location.list.items.map((item, index) => (
+                <li key={item.name} className="rounded-2xl border border-gray-100 bg-[#FAFAF7] p-5 flex items-center gap-4">
+                  <span aria-hidden="true" className="w-10 h-10 rounded-xl bg-[#27156F]/8 text-[#27156F] flex items-center justify-center font-display font-bold text-sm">
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <h4 className="font-display font-bold text-[#1a1238]">{item.to ? <Link to={item.to} className="hover:underline">{item.name}</Link> : item.name}</h4>
+                    <p className="text-gray-500 text-sm">{item.area}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+        ))}
         <div className="mt-8">
           <Link to="/locations/" className="inline-flex items-center gap-1.5 text-[#27156F] text-sm font-semibold hover:text-[#9e5c00] transition-colors">
             All clinic addresses and directions<Icons.ArrowRight />
@@ -1337,7 +1524,7 @@ function FinalCTA({ onBook, onChat }: { onBook: () => void; onChat: () => void }
           <button
             type="button"
             onClick={onBook}
-            className="flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]"
+            className="flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]"
           >
             Book an Appointment
             <Icons.ArrowRight />

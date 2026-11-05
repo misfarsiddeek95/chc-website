@@ -26,7 +26,7 @@ export default function SitemapPage({ routes }: { routes: RouteDef[] }) {
               <ul className="space-y-2.5">
                 {g.items.map(r => (
                   <li key={r.path}>
-                    <Link to={r.path} className="text-[#27156F] hover:text-[#9e5c00] hover:underline">{label(r)}</Link>
+                    <Link to={r.path} className="text-[#27156F] underline underline-offset-4 decoration-[#27156F]/30 hover:text-[#9e5c00] hover:decoration-current">{label(r)}</Link>
                     {r.crumbs.length > 2 && r.section !== 'Resources & help' && <span className="text-xs text-gray-600"> · {r.crumbs[r.crumbs.length - 2].name}</span>}
                   </li>
                 ))}

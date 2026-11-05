@@ -4,8 +4,14 @@ The Complete Healthcare Connect website, built with **Next.js 16 (App Router)**,
 TypeScript and Tailwind CSS v4. Every page is prerendered to static HTML at build time,
 so content, links and metadata are present without JavaScript.
 
-Business items to confirm before launch (policy text, statistics, testimonials, form
-hosting…) are listed in [`docs/CONTENT-NOTES.md`](docs/CONTENT-NOTES.md) › Outstanding items.
+Business items to confirm before launch (policy text, mock data, form hosting…) are
+listed in [`docs/CONTENT-NOTES.md`](docs/CONTENT-NOTES.md) (section 7 lists every mock value).
+
+| Document | Covers |
+|---|---|
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Environment variables, hosting, Cloudflare, launch checklist, monitoring |
+| [`docs/SECURITY.md`](docs/SECURITY.md) | Protections in place, infrastructure requirements, remaining risks |
+| [`docs/CONTENT-NOTES.md`](docs/CONTENT-NOTES.md) | Business answers, mock data, outstanding content |
 
 ## Quick start
 
@@ -13,7 +19,7 @@ Requires Node.js 20.9 or later.
 
 ```bash
 npm install
-cp .env.example .env.local   # optional: set the form endpoint
+cp .env.example .env.local   # optional in development (forms log instead of emailing)
 npm run dev                  # http://localhost:3000
 ```
 
@@ -25,7 +31,11 @@ npm run dev                  # http://localhost:3000
 | `npm run build:static` | Static export to `out/` for any static host (see Deploying) |
 | `npm run lint` | ESLint (Next.js core-web-vitals + TypeScript rules) |
 | `npm run typecheck` | TypeScript, strict mode |
-| `npm run validate` | Site-wide browser checks against a running build (see Testing) |
+| `npm test` | Unit tests (form validation, sanitising, rate limiter) |
+| `npm run test:api -- <url>` | Integration tests for `POST /api/enquiry` against a running server build |
+| `npm run test:e2e -- <url>` | Browser tests for every page at 4 widths (see Testing) |
+| `npm run check` | lint + typecheck + unit tests (run before every commit) |
+| `npm run audit` | `npm audit` for production dependencies |
 
 ## Project structure
 
@@ -65,8 +75,11 @@ export default function Page() {
 }
 ```
 
-Views that need interactivity (the booking dialog, tabs, forms) are client components
-(`'use client'`). They are still rendered to HTML at build time.
+Pages are **Server Components** by default: no JavaScript is sent for them. Only the
+parts that need the browser are Client Components (`'use client'`): the site shell
+(header menus, booking dialog, chat), `EnquiryForm`, `ActionButton` (a book/chat button
+that server pages can drop in), and the views with real state: the homepage (slider, tabs,
+counters), the NDIS eligibility check and the blog filter.
 
 ### Adding content
 
@@ -86,23 +99,25 @@ Internal links use `<Link to="/path/">` from `src/components/Link.tsx` (next/lin
 
 ## Forms
 
-`EnquiryForm` handles booking, referral and contact enquiries.
+`EnquiryForm` handles booking, referral, contact and franchise enquiries. Its rules live in
+`src/lib/enquiry.ts`, shared by the browser and the server.
 
-- **With `NEXT_PUBLIC_FORM_ENDPOINT`** set at build time, it POSTs JSON to that URL
-  (Formspree, Power Automate, a CRM webhook…). The endpoint must accept CORS requests from
-  the site's domain. Fields: `type`, `firstName`, `lastName`, `phone`, `email`,
-  `organisation`, `service`, `region`, `ndisNumber`, `message`, `consent`, `page`
-  (empty fields are omitted, values are trimmed). The endpoint's origin is added to the
-  Content-Security-Policy automatically (server build) — for a static host add it to
-  `connect-src` in `public/_headers`.
-- **Without it**, the form opens the visitor's email app addressed to
-  admin@chcconnect.com.au with the details filled in.
+- **Server build (default):** the form POSTs JSON to `/api/enquiry`
+  (`src/app/api/enquiry/route.api.ts`). The server checks the origin and size,
+  rate-limits, verifies Turnstile if configured, re-validates and cleans every field,
+  then emails the admin inbox through Resend. Field errors found by the server are shown
+  on the form. See `docs/SECURITY.md` for each layer and `.env.example` for settings.
+  Without `RESEND_API_KEY` in development, submissions are logged (field names only)
+  and accepted; in production they return 503 so a missing key is noticed.
+- **Static build:** there is no server. Set `NEXT_PUBLIC_FORM_ENDPOINT` to an external
+  form backend (it must validate and rate-limit too), or leave it empty and the form
+  opens the visitor's email app addressed to admin@chcconnect.com.au.
 
-Health information is involved: choose a backend with appropriate privacy controls.
-Built in: inline validation and an error summary, length limits, a 15-second request
-timeout, double-submit protection, and a hidden honeypot field that silently drops bots.
-Client-side checks are a convenience only; **the receiving endpoint must validate and
-rate-limit submissions itself.**
+The route file is named `route.api.ts` so the static export, which can't contain POST
+handlers, leaves it out (`pageExtensions` in `next.config.ts`).
+
+The NDIS referral, service agreement and planned intervention forms are proposed as
+Zanda online forms (links in `src/content/site.ts`, currently mock).
 
 ## Chat panel
 
@@ -120,7 +135,11 @@ a chat provider's widget (and allow its domains in the CSP).
   sitemap at `/sitemap/`.
 - Policy pages are `noindex` until the approved wording is added: then remove
   `noindex: true` from `legal()` in `src/lib/routes.ts`.
-- The Open Graph image is 538×440. A 1200×630 image would give sharper social previews.
+- Open Graph image: 1200×630 (`public/brand/og-image.png`).
+- `/llms.txt`: a plain-text summary of the business and every page for AI answer engines.
+- Local SEO: each clinic has MedicalClinic schema with address, geo, opening hours and
+  its Google Business Profile link. Name, address and phone come from one source
+  (`src/content/site.ts`) so they stay consistent everywhere.
 
 ## Accessibility
 
@@ -128,53 +147,58 @@ Skip link; one `<h1>` per page; landmark navs; keyboard-operable dropdowns, dial
 (focus trap, Esc, focus return), tabs (arrow keys, Home/End) and slider (pause button,
 ←/→, pauses on hover/focus); focus moves to the page content after navigation;
 labelled form fields with linked errors; `prefers-reduced-motion` turns off all motion
-and auto-advance. Known gap: white text on the `#FF9D00` orange buttons is below WCAG AA
-contrast — a brand decision (see `docs/CONTENT-NOTES.md`).
+and auto-advance; 24px minimum targets; visible focus ring on light and dark backgrounds.
+Orange buttons use navy text (8:1 contrast). Checked with axe-core (WCAG 2.2 AA) on every
+page: no violations apart from the decorative logo glyph.
 
 ## Deploying
 
-**Option A — Vercel or any Node host (recommended).** `npm run build` then `npm start`
-(or import the repo into Vercel). Redirects from the old WordPress URLs, security headers
-and image optimisation (AVIF/WebP, responsive sizes) are handled by `next.config.ts`.
-
-**Option B — static hosting** (Netlify, Cloudflare Pages, S3, cPanel). Run
-`npm run build:static` and upload `out/`. `public/_redirects` and `public/_headers`
-cover Netlify / Cloudflare Pages; on other hosts recreate them as server rules
-(301 redirects + the headers). In this mode images are served unoptimised.
-
-Before launch:
-1. Keep the WordPress forms live (`/ndis-referral-form/`, `/ndis-service-agreement/`,
-   `/revised-planned-intervention/`) or rebuild them — the site links to them.
-2. Download the NDIS, WorkCover and DVA logos (currently hotlinked from WordPress) into
-   `public/`, then update the URLs in `src/views/HomePage.tsx` and `src/views/FundingPage.tsx`
-   and remove `completehealthcareconnect.com.au` from `images.remotePatterns` and the CSP.
-3. Work through `docs/CONTENT-NOTES.md` › Outstanding items.
-
-### Security headers
-
-Set for every response (server build) or via `public/_headers` (static): a
-Content-Security-Policy (no third-party scripts; images only from this site and
-Unsplash; no framing), HSTS (one year, this host), `nosniff`, `X-Frame-Options: DENY`,
-a strict referrer policy and a Permissions-Policy. `X-Powered-By` is removed. If you add
-analytics, a chat widget or maps, allow their domains in the CSP in `next.config.ts`
-(and `public/_headers`).
+See **[`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)**. In short: `npm run build` and
+`npm start` on Vercel or any Node host behind Cloudflare, with the variables from
+`.env.example`. The static export (`npm run build:static`) is still supported but has no
+form endpoint.
 
 ## Testing
 
-`scripts/validate.mjs` opens every page at 1440, 1024, 768 and 375px and checks: no
-JavaScript or hydration errors; exactly one `<h1>`; unique titles and descriptions;
-canonical URL; robots tag; valid JSON-LD with breadcrumbs; RSS link; all internal links
-and `#anchors` resolve; images have alt text; no duplicate IDs; no horizontal scroll.
-Then it runs interaction tests: menus, hero slider, location tabs (click and keyboard),
-booking dialog (focus, validation, Esc, closing on navigation), enquiry form, honeypot,
-NDIS eligibility check, chat panel, mobile menu, 404 page, redirects, security headers,
-sitemap, robots.txt and RSS.
+| Level | Command | What it covers |
+|---|---|---|
+| Unit | `npm test` | Validation rules, type confusion, unknown fields, length limits, header-injection and bidi characters, HTML escaping, honeypot, rate limiter (incl. memory bound). Node's built-in test runner, no extra dependencies. |
+| Integration | `npm run test:api -- http://localhost:3000` | The real endpoint: 405 on GET, 403 cross-site (CSRF), 415 non-JSON, 400 bad JSON, 413 oversize, 422 field errors, honeypot, `no-store`, 429 + `Retry-After`, and security headers on pages. |
+| End-to-end | `npm run test:e2e -- http://localhost:3000` | Every page at 1440/1024/768/375px: no console or hydration errors, one `<h1>`, unique titles and descriptions, canonical, robots, valid JSON-LD, all internal links and anchors, alt text, no duplicate IDs, no horizontal scroll. Then interactions: menus, slider, tabs, dialog focus and Esc, forms (server errors shown on fields, success state), honeypot, eligibility check, chat, mobile menu, 404, redirects, headers, sitemap, robots and RSS. |
 
 ```bash
-npm install --no-save playwright && npx playwright install chromium   # once
-npm run build && npm start &
-npm run validate                                   # http://127.0.0.1:3000
+npm install --no-save playwright && npx playwright install chromium   # once, for e2e
+npm run build && TRUST_PROXY=1 npm start &
+npm test
+npm run test:api -- http://localhost:3000
+npm run test:e2e -- http://localhost:3000
 # static export:
 npm run build:static && npx serve out -l 5000 &
-node scripts/validate.mjs http://127.0.0.1:5000 --static
+npm run test:e2e -- http://127.0.0.1:5000 --static
 ```
+
+`test:api` needs `TRUST_PROXY=1` on the server so its rate-limit test can use its own
+test IP addresses.
+
+### Last results (4 Nov 2026)
+
+- Unit: 15/15 pass.
+- API: 10/10 pass.
+- End-to-end: 39 pages × 4 widths, server and static builds, no problems.
+- axe-core (WCAG 2.2 AA): 40 pages, no violations apart from the logo glyph. No broken links.
+- Lighthouse (mobile, simulated throttling, local server):
+
+| Page | Performance | Accessibility | Best practices | SEO | TBT | CLS |
+|---|---|---|---|---|---|---|
+| Home | 97 | 97 | 96 | 100 | 80 ms | 0 |
+| Contact | 99 | 97 | 100 | 100 | 110 ms | 0 |
+| FAQs | 97 | 96 | 100 | 100 | 100 ms | 0 |
+| NDIS services | 95 | 97 | 96 | 100 | 130 ms | 0 |
+| Locations | 94 | 96 | 100 | 100 | 140 ms | 0 |
+| Physiotherapy | 91 | 97 | 96 | 100 | 230 ms | 0 |
+
+  LCP was 1.9–2.9 s, but the test machine couldn't reach the Unsplash image host, so
+  re-measure LCP on the deployed site (PageSpeed Insights) once real photos are in
+  `public/`. The best-practices misses are the same blocked images.
+- `npm audit --omit=dev`: 0 vulnerabilities. Dev-only advisory in ESLint's `minimatch`
+  (see `docs/SECURITY.md`).

@@ -1,8 +1,6 @@
-'use client'
-
 import { Icons } from '@/components/Icons'
+import { accreditations, clinics } from '@/content/site'
 import { CtaBand, OutlineButton, PageHero, Section, SectionHeader, TextLink } from '@/components/ui'
-import { useSiteUi } from '@/ui-context'
 
 const principles = [
   { title: 'Quality health outcomes', body: 'Safe, effective, evidence-based care that makes a real difference.' },
@@ -21,7 +19,6 @@ const values = [
 ]
 
 export default function AboutPage() {
-  const { openBook, openChat } = useSiteUi()
   return (
     <>
       <PageHero
@@ -31,8 +28,8 @@ export default function AboutPage() {
         intro={<p>Complete Healthcare Connect began in Brisbane and has grown into a multidisciplinary team of clinicians, nurses and support workers. We believe quality healthcare is a basic right, and we work to make it affordable, holistic and easy to access.</p>}
         img="https://images.unsplash.com/photo-1765896387387-0538bc9f997e?w=800&h=600&fit=crop&auto=format"
         imgAlt="Healthcare worker smiling with an older patient"
-        onBook={openBook}
-        onChat={openChat}
+        onBook
+        onChat
       />
 
       <Section tone="white" id="our-story" labelledBy="story-title">
@@ -88,6 +85,30 @@ export default function AboutPage() {
         </ul>
       </Section>
 
+      {/* Trust signals: registrations and memberships (src/content/site.ts › accreditations; some are MOCK). */}
+      <Section tone="cream" id="registrations" labelledBy="registrations-title">
+        <SectionHeader eyebrow="Registrations & memberships" title={<span id="registrations-title">Care you can trust.</span>} intro="Our services meet the standards of the schemes and professional bodies we work with." />
+        <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {accreditations.map(a => (
+            <li key={a.title} className="flex gap-4 rounded-2xl bg-white border border-gray-100 p-5">
+              <span aria-hidden="true" className="w-10 h-10 rounded-xl bg-[#27156F] text-white flex items-center justify-center flex-shrink-0"><Icons.CheckCircle /></span>
+              <span>
+                <span className="block font-display font-bold text-[#1a1238]">{a.title}</span>
+                <span className="block text-sm text-gray-600 leading-relaxed">{a.detail}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <span className="font-semibold text-[#1a1238]">Read our reviews on Google:</span>
+          {clinics.map(c => (
+            <a key={c.slug} href={c.gbp} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#27156F] underline underline-offset-2 hover:text-[#9e5c00]">
+              {c.name}<span className="sr-only"> clinic reviews (opens in a new tab)</span> <Icons.ExternalLink />
+            </a>
+          ))}
+        </div>
+      </Section>
+
       <Section tone="brand" id="community" labelledBy="community-title">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
@@ -119,7 +140,7 @@ export default function AboutPage() {
         </ul>
       </Section>
 
-      <CtaBand onBook={openBook} onChat={openChat} />
+      <CtaBand />
     </>
   )
 }

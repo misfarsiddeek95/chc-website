@@ -15,7 +15,14 @@ export type Post = {
   seoTitle: string
   description: string
   category: 'Healthy ageing' | 'Wellbeing' | 'NDIS' | 'Physiotherapy'
+  /** Key in src/content/authors.ts (MOCK authors until the business confirms). */
   author: string
+  /** Clinician who reviewed the article (key in authors.ts). */
+  reviewedBy?: string
+  /** "Key takeaways" box at the top (AEO: a short summary answer engines can quote). */
+  takeaways: string[]
+  /** Authoritative sources the article draws on (official Australian sites). */
+  sources: { label: string; url: string }[]
   /** ISO date first published on the previous site, if known. */
   published?: string
   updated: string
@@ -30,11 +37,22 @@ export const posts: Post[] = [
   {
     path: '/fall-prevention/',
     title: 'Fall prevention: simple ways to stay strong and steady',
-    seoTitle: 'Fall Prevention for Older Adults: Strength, Balance & Safety',
+    seoTitle: 'Fall Prevention for Older Adults: Strength & Balance',
     description:
       'Why falls happen, the exercises that help most, how often to train, and simple home changes that reduce the risk of falling. From our physiotherapy team.',
     category: 'Healthy ageing',
-    author: 'Team CHC',
+    author: 'physio', // MOCK author
+    takeaways: [
+      'Exercise that targets leg strength and balance is one of the most effective ways to reduce falls.',
+      'Two to three sessions a week can make a difference; start gently and build up.',
+      'Simple home changes (better lighting, grab rails, removing loose rugs) also help.',
+      'A physiotherapist can choose the right exercises for you and progress them safely.',
+    ],
+    sources: [
+      { label: 'Older people and falls (healthdirect)', url: 'https://www.healthdirect.gov.au/falls' },
+      { label: 'Physical activity guidelines for older people (healthdirect)', url: 'https://www.healthdirect.gov.au/physical-activity-guidelines-for-older-adults' },
+      { label: 'Health benefits of tai chi (healthdirect)', url: 'https://www.healthdirect.gov.au/health-benefits-of-tai-chi' },
+    ],
     published: '2024-08-05',
     updated: '2026-10-24',
     readMins: 5,
@@ -72,11 +90,23 @@ export const posts: Post[] = [
   {
     path: '/integrating-mindfulness/',
     title: 'Bringing mindfulness into everyday life',
-    seoTitle: 'Integrating Mindfulness Into Everyday Life: Simple Practices',
+    seoTitle: 'Integrating Mindfulness Into Everyday Life: 5 Practices',
     description:
       'What mindfulness is, simple practices you can try in a few minutes a day, how to adapt them for different abilities, and when to seek extra support.',
     category: 'Wellbeing',
-    author: 'Team CHC',
+    author: 'ot', // MOCK author
+    reviewedBy: 'physio', // MOCK reviewer
+    takeaways: [
+      'Many people find regular mindfulness helps them feel calmer, sleep better and cope with stress.',
+      'A few minutes a day is enough to start; link it to something you already do.',
+      'Practices can be adapted for different abilities: seated, lying down, guided or shortened.',
+      'It supports wellbeing alongside other care, but isn’t a replacement for treatment. If stress or low mood affects daily life, talk to your GP.',
+    ],
+    sources: [
+      { label: 'Mindfulness (healthdirect)', url: 'https://www.healthdirect.gov.au/mindfulness' },
+      { label: 'Relaxation techniques for stress relief (healthdirect)', url: 'https://www.healthdirect.gov.au/relaxation-techniques-for-stress-relief' },
+      { label: 'Head to Health (Australian Government)', url: 'https://www.headtohealth.gov.au/' },
+    ],
     updated: '2026-10-24',
     readMins: 4,
     tint: '#EEE9FF',
@@ -98,7 +128,7 @@ export const posts: Post[] = [
       { type: 'h2', text: 'Mindfulness for every ability' },
       { type: 'p', text: 'Mindfulness can be adapted to suit different needs. Practices can be done seated or lying down, guided with pictures or audio, shortened, or built into sensory activities. Carers can practise too: a few mindful breaths between tasks can make a busy day feel more manageable.' },
       { type: 'h2', text: 'When to seek more support' },
-      { type: 'p', text: 'If stress, low mood or anxiety are affecting your daily life, talk to your GP or a mental health professional. Our team can talk with you about psychology and counselling options.' },
+      { type: 'p', text: 'If stress, low mood or anxiety are affecting your daily life, talk to your GP or a mental health professional. Your GP can refer you to the right support.' },
       { type: 'callout', text: 'If you are in crisis or worried about your safety, call Lifeline on 13 11 14 (24 hours) or 000 in an emergency.' },
     ],
     related: [
@@ -109,11 +139,23 @@ export const posts: Post[] = [
   {
     path: '/how-to-choose-the-right-ndis-provider/',
     title: 'How to choose the right NDIS provider: 8 things to check',
-    seoTitle: 'How to Choose the Right NDIS Provider: 8 Things to Check',
+    seoTitle: 'How to Choose the Right NDIS Provider: 8 Checks',
     description:
-      'A practical checklist for choosing an NDIS provider: registration, services, flexibility, experience, communication, availability, goals, and your service agreement.',
+      'A practical checklist for choosing an NDIS provider: registration, services, flexibility, experience, communication, availability, goals and service agreements.',
     category: 'NDIS',
-    author: 'Team CHC',
+    author: 'ndis', // MOCK author
+    reviewedBy: 'ot', // MOCK reviewer
+    takeaways: [
+      'Check that the provider is registered with the NDIS Quality and Safeguards Commission for the supports you need.',
+      'Agency-managed plans can only use registered providers.',
+      'Ask about their experience, availability and communication, and expect support built around your goals.',
+      'Read the service agreement before you start, and remember you can change providers.',
+    ],
+    sources: [
+      { label: 'How to find and choose a provider (NDIS)', url: 'https://www.ndis.gov.au/participants/working-providers/finding-providers/how-find-and-choose-provider' },
+      { label: 'Guide to working with providers (NDIS)', url: 'https://www.ndis.gov.au/participants/working-providers/get-know-your-providers/guide-working-providers' },
+      { label: 'Find a registered provider (NDIS Commission)', url: 'https://www.ndiscommission.gov.au/provider-registration/find-registered-provider' },
+    ],
     published: '2026-08-20',
     updated: '2026-10-24',
     readMins: 6,
@@ -143,7 +185,7 @@ export const posts: Post[] = [
       { type: 'list', items: ['Choosing on price or availability alone', 'Not asking how and where support is delivered', 'Skipping the service agreement details', 'Rushing the decision: it’s fine to speak with more than one provider'] },
       { type: 'callout', text: 'You can change providers. Check the notice period in your service agreement, and talk to your support coordinator or local area coordinator if you need help.' },
       { type: 'h2', text: 'How we can help' },
-      { type: 'p', text: 'We are a registered NDIS provider across 24 registration groups, with therapy, nursing, support coordination and in-home support in one team. We see clients at home, in five South East Queensland clinics and by telehealth.' },
+      { type: 'p', text: 'We are a registered NDIS provider across 24 registration groups, with therapy, nursing, support coordination and in-home support in one team. We see clients at home, in three South East Queensland clinics and by telehealth.' },
     ],
     related: [
       { label: 'NDIS disability services', to: '/ndis-services/' },
@@ -154,11 +196,22 @@ export const posts: Post[] = [
   {
     path: '/physiotherapy-for-ndis-participants-in-logan-central/',
     title: 'Physiotherapy for NDIS participants in Logan Central',
-    seoTitle: 'NDIS Physiotherapy in Logan Central | Clinic & Home Visits',
+    seoTitle: 'NDIS Physiotherapy in Logan Central | Clinic & Home',
     description:
       'How physiotherapy can support NDIS participants in Logan, what happens at your first appointment, how it is funded, and how to book at our Logan Central clinic.',
     category: 'Physiotherapy',
-    author: 'Team CHC',
+    author: 'physio', // MOCK author
+    reviewedBy: 'ndis', // MOCK reviewer
+    takeaways: [
+      'For NDIS participants, physiotherapy is linked to the goals in your plan.',
+      'Physiotherapy is usually funded from the capacity building supports in your plan.',
+      'Our Logan Central clinic has a rehab gym, and we also visit you at home.',
+      'We provide progress reports and functional capacity assessments to support plan reviews.',
+    ],
+    sources: [
+      { label: 'Guide to using your funding (NDIS)', url: 'https://www.ndis.gov.au/participants/using-your-funding/understanding-your-ndis-funding/guide-using-your-funding' },
+      { label: 'Find a registered provider (NDIS Commission)', url: 'https://www.ndiscommission.gov.au/provider-registration/find-registered-provider' },
+    ],
     updated: '2026-10-24',
     readMins: 4,
     tint: '#E8F0FF',

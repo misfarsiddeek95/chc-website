@@ -1,13 +1,9 @@
-'use client'
-
 import { Icons } from '@/components/Icons'
 import { CtaBand, PageHero, Section, TextLink } from '@/components/ui'
 import { faqGroups } from '@/content/faqs'
 import { contact } from '@/content/site'
-import { useSiteUi } from '@/ui-context'
 
 export default function FaqPage() {
-  const { openBook, openChat } = useSiteUi()
   return (
     <>
       <PageHero
@@ -15,8 +11,8 @@ export default function FaqPage() {
         badge="Bookings · NDIS · Costs · Feedback"
         title="Frequently asked questions."
         intro={<p>Quick answers about booking, the NDIS, funding and costs. Can’t find what you need? Call <a href={contact.phoneHref} className="text-[#27156F] font-semibold underline">{contact.phone}</a> or chat with our team.</p>}
-        onBook={openBook}
-        onChat={openChat}
+        onBook
+        onChat
         aside={
           <nav aria-label="FAQ topics" className="rounded-3xl bg-white border border-purple-100 shadow-2xl shadow-purple-200 p-7">
             <h2 className="font-display text-xl font-bold text-[#1a1238] mb-4">Jump to a topic</h2>
@@ -55,7 +51,7 @@ export default function FaqPage() {
         </Section>
       ))}
 
-      <CtaBand title="Still have a question?" onBook={openBook} onChat={openChat} />
+      <CtaBand title="Still have a question?" />
     </>
   )
 }

@@ -44,14 +44,14 @@ export default function ReferralsPage() {
       </Section>
 
       <Section tone="lavender" id="forms" labelledBy="forms-title">
-        <SectionHeader eyebrow="Secure online forms" title={<span id="forms-title">NDIS forms.</span>} intro="Each form opens in a new tab, so you won’t lose your place here." />
+        <SectionHeader eyebrow="Secure online forms" title={<span id="forms-title">NDIS forms.</span>} intro="Each form opens securely in Zanda, our client management system, in a new tab. Submissions go straight to our intake team." />
         <ul className="grid md:grid-cols-3 gap-6">
           {documents.map((d, i) => (
             <li key={d.title} className="bg-white rounded-3xl p-7 border border-purple-100 shadow-sm flex flex-col">
               <span className="w-12 h-12 rounded-2xl bg-[#27156F] text-white font-display font-bold flex items-center justify-center mb-6">0{i + 1}</span>
               <h3 className="font-display text-xl font-bold text-[#1a1238] mb-2">{d.title}</h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{d.body}</p>
-              <a href={d.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-5 py-3.5 rounded-xl text-sm transition-colors">
+              <a href={d.href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-5 py-3.5 rounded-xl text-sm transition-colors">
                 {d.action}<span className="sr-only"> (opens in a new tab)</span> <Icons.ExternalLink />
               </a>
             </li>

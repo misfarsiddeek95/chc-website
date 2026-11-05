@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { SITE_NAME, SITE_URL } from '@/content/site'
 import { getRoute, type RouteDef } from '@/lib/routes'
 
-// Matches the file's real size. Swap in a 1200×630 image for sharper social previews.
-const OG_IMAGE = { url: '/brand/og-image.png', width: 538, height: 440, alt: SITE_NAME }
+// 1200×630 sharing image (designed Nov 2026; the business had no social image).
+const OG_IMAGE = { url: '/brand/og-image.png', width: 1200, height: 630, alt: `${SITE_NAME}: allied health, NDIS and home care` }
 
 export const RSS_ALTERNATE = { 'application/rss+xml': [{ url: '/blog/rss.xml', title: `${SITE_NAME} Blog` }] }
 
@@ -64,9 +64,33 @@ function serialise(data: object) {
 }
 
 /** Structured data for a route: its own schema plus the BreadcrumbList. */
+/** Page type for the WebPage schema (checklist: WebPage / AboutPage / ContactPage). */
+function pageType(path: string): string {
+  if (path === '/about-us/' || path === '/our-team/') return 'AboutPage'
+  if (path === '/contact/') return 'ContactPage'
+  if (['/blog/', '/news/', '/locations/', '/sitemap/'].includes(path)) return 'CollectionPage'
+  return 'WebPage'
+}
+
+function webPageSchema(route: RouteDef) {
+  const url = canonicalUrl(route.path)
+  return {
+    '@context': 'https://schema.org',
+    '@type': pageType(route.path),
+    '@id': `${url}#webpage`,
+    url,
+    name: route.title,
+    description: route.description,
+    inLanguage: 'en-AU',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#organization` },
+    primaryImageOfPage: `${SITE_URL}${OG_IMAGE.url}`,
+  }
+}
+
 export function RouteJsonLd({ path }: { path: string }) {
   const route = getRoute(path)
-  const schemas = [...(route.schema ?? []), breadcrumbSchema(route)].filter((s): s is object => s !== null)
+  const schemas = [webPageSchema(route), ...(route.schema ?? []), breadcrumbSchema(route)].filter((s): s is object => s !== null)
   return (
     <>
       {schemas.map((s, i) => (

@@ -155,7 +155,7 @@ export function ResultCard({ result, onBook }: { result: Result; onBook: () => v
               <h2 className={`font-display text-2xl md:text-3xl font-bold mb-3 ${result.tone === 'good' ? 'text-white' : 'text-[#1a1238]'}`}>{result.title}</h2>
               <p className={`leading-relaxed mb-6 ${result.tone === 'good' ? 'text-white/85' : 'text-gray-700'}`}>{result.body}</p>
               <div className="flex flex-wrap gap-3">
-                <button type="button" onClick={onBook} className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-6 py-3 rounded-xl text-sm">Talk to our team <Icons.ArrowRight /></button>
+                <button type="button" onClick={onBook} className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3 rounded-xl text-sm">Talk to our team <Icons.ArrowRight /></button>
                 <a href="https://www.ndis.gov.au/applying-access-ndis/how-apply" target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 font-semibold px-6 py-3 rounded-xl text-sm border-2 ${result.tone === 'good' ? 'border-white/70 text-white hover:bg-white hover:text-[#27156F]' : 'border-[#27156F] text-[#27156F] hover:bg-[#27156F] hover:text-white'}`}>How to apply on ndis.gov.au <Icons.ExternalLink /></a>
               </div>
             </div>

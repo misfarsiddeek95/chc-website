@@ -25,15 +25,15 @@ export const news: NewsItem[] = [
     label: 'Announcement',
     title: 'Our new website is here',
     summary:
-      'Find services faster, check your NDIS eligibility in a minute, book an appointment or send a referral online, and find directions to all five clinics.',
+      'Find services faster, check your NDIS eligibility in a minute, book an appointment or send a referral online, and find directions to all three clinics.',
     link: { label: 'Explore our services', to: '/ndis-services/' },
   },
   {
-    id: 'five-clinics',
+    id: 'our-clinics',
     label: 'Locations',
-    title: 'Five clinics across South East Queensland',
+    title: 'Three clinics across South East Queensland',
     summary:
-      'Visit us in Logan Central, Booval, North Lakes, Capalaba or Cannon Hill, or book a home visit or telehealth appointment.',
+      'Visit us in Logan Central, Booval (Ipswich) or North Lakes, weekdays 8:30 am to 5 pm, or book a home visit or telehealth appointment.',
     link: { label: 'Find a clinic', to: '/locations/' },
   },
   {

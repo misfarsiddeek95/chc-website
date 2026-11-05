@@ -7,6 +7,8 @@ import SiteHeader from '@/components/SiteHeader'
 import SiteFooter from '@/components/SiteFooter'
 import ChatPanel from '@/components/ChatPanel'
 import BookModal, { type ModalType } from '@/components/BookModal'
+import FloatingButtons from '@/components/FloatingButtons'
+import Analytics from '@/components/Analytics'
 import { SiteUiContext } from '@/ui-context'
 
 /**
@@ -75,6 +77,8 @@ export default function SiteShell({ children }: { children: ReactNode }) {
           )}
         </button>
 
+        <FloatingButtons chatOpen={chatOpen} />
+        <Analytics />
         <ChatPanel open={chatOpen} onClose={closeChat} onBook={openBook} onReferral={openReferral} />
         <BookModal type={modal} onClose={closeModal} />
       </div>

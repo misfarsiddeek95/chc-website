@@ -13,7 +13,7 @@ export default function NotFoundPage() {
             <li key={s.to}><Link to={s.to} className="block bg-white border border-gray-200 text-gray-700 hover:border-[#27156F] hover:text-[#27156F] text-sm font-medium px-4 py-2 rounded-full">{s.label}</Link></li>
           ))}
         </ul>
-        <Link to="/" className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-7 py-4 rounded-xl">Go to the homepage</Link>
+        <Link to="/" className="inline-flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-7 py-4 rounded-xl">Go to the homepage</Link>
       </div>
     </section>
   )

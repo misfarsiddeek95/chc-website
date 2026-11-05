@@ -1,10 +1,7 @@
-'use client'
-
 import Image from 'next/image'
 import niisqLogo from '@/assets/niisq-logo.png'
 import { Callout, CtaBand, PageHero, Section, SectionHeader, TextLink } from '@/components/ui'
 import { contact } from '@/content/site'
-import { useSiteUi } from '@/ui-context'
 
 type Scheme = { id: string; name: string; who: string; body: string; services: string; link?: { to: string; label: string } }
 
@@ -15,12 +12,11 @@ const schemes: Scheme[] = [
   { id: 'workcover', name: 'WorkCover Queensland', who: 'Workers with an accepted workplace injury claim', body: 'Rehabilitation to help you return to work safely, plus independent functional assessments and reports.', services: 'Physiotherapy, occupational therapy', link: { to: '/allied-health-services/physiotherapy/', label: 'Physiotherapy' } },
   { id: 'ctp', name: 'CTP insurance', who: 'People injured in a motor vehicle accident', body: 'Injury management and rehabilitation under compulsory third party insurance claims.', services: 'Physiotherapy, occupational therapy' },
   { id: 'dva', name: 'DVA', who: 'Veterans and eligible family members', body: 'We provide allied health and community services to Department of Veterans’ Affairs clients.', services: 'Allied health, community nursing' },
-  { id: 'aged-care', name: 'My Aged Care & Home Care Packages', who: 'Older Australians assessed through My Aged Care', body: 'We support Home Care Package clients at home with personal care, nursing, domestic help and therapy.', services: 'Aged care and in-home support', link: { to: '/aged-care-services/', label: 'Aged care services' } },
+  { id: 'aged-care', name: 'Support at Home & My Aged Care', who: 'Older Australians assessed through My Aged Care', body: 'We support older Australians through the Support at Home Program, CHSP, the Transition Care Program and respite, with personal care, nursing, domestic help and therapy, subject to eligibility and approved service arrangements.', services: 'Aged care, nursing and allied health', link: { to: '/aged-care-services/', label: 'Aged care services' } },
   { id: 'private', name: 'Private health insurance', who: 'Clients with extras cover', body: 'You may be able to claim part of the cost of some allied health sessions, depending on your fund and level of cover.', services: 'Allied health' },
 ]
 
 export default function FundingPage() {
-  const { openBook, openChat } = useSiteUi()
   return (
     <>
       <PageHero
@@ -28,8 +24,8 @@ export default function FundingPage() {
         badge="NDIS · NIISQ · Medicare · WorkCover · CTP · DVA"
         title="Funding schemes we work with."
         intro={<p>We are registered, approved or contracted across a range of funding schemes, so more people can access care. Not sure what you’re eligible for? We’ll help you work it out.</p>}
-        onBook={openBook}
-        onChat={openChat}
+        onBook
+        onChat
         aside={
           <div className="rounded-3xl bg-white border border-purple-100 shadow-2xl shadow-purple-200 p-8 flex flex-col gap-6 items-center justify-center">
             <Image src="https://completehealthcareconnect.com.au/wp-content/uploads/2023/09/2-2.png" alt="NDIS registered provider" width={220} height={90} sizes="220px" className="max-h-24 w-auto object-contain" />
@@ -58,7 +54,7 @@ export default function FundingPage() {
         </div>
       </Section>
 
-      <CtaBand title="Not sure which funding applies to you?" body={<>Tell us about your situation and we’ll explain your options in plain language. Call <a href={contact.phoneHref} className="text-[#27156F] font-semibold underline">{contact.phone}</a>.</>} onBook={openBook} onChat={openChat} />
+      <CtaBand title="Not sure which funding applies to you?" body={<>Tell us about your situation and we’ll explain your options in plain language. Call <a href={contact.phoneHref} className="text-[#27156F] font-semibold underline">{contact.phone}</a>.</>} />
     </>
   )
 }

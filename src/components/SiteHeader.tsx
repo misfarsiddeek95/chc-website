@@ -57,7 +57,7 @@ export default function SiteHeader({ onBook }: { onBook: () => void }) {
   return (
     <>
       {/* Top bar */}
-      <div className="bg-[#27156F] text-white/80 text-xs py-2 hidden md:block">
+      <div role="region" aria-label="Contact details and social links" className="bg-[#27156F] text-white/80 text-xs py-2 hidden md:block">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <a href={contact.phoneHref} className="flex items-center gap-1.5 hover:text-white transition-colors font-bold text-sm text-white">
@@ -66,12 +66,13 @@ export default function SiteHeader({ onBook }: { onBook: () => void }) {
             <a href={`mailto:${contact.email}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
               <Icons.Mail /> {contact.email}
             </a>
+            <span className="flex items-center gap-1.5"><Icons.Clock /> {contact.hoursShort}</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="opacity-70">Follow us:</span>
             {social.map(s => (
               <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={`${s.label} (opens in a new tab)`} className="hover:text-white transition-colors">
-                {s.label === 'Facebook' ? <Icons.Facebook /> : s.label === 'Instagram' ? <Icons.Instagram /> : <Icons.YouTube />}
+                {(() => { const I = Icons[s.label as 'Facebook' | 'Instagram' | 'YouTube' | 'LinkedIn']; return <I /> })()}
               </a>
             ))}
           </div>
@@ -140,7 +141,7 @@ export default function SiteHeader({ onBook }: { onBook: () => void }) {
             <button
               type="button"
               onClick={onBook}
-              className="hidden md:flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold px-4 xl:px-5 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-orange-200 whitespace-nowrap"
+              className="hidden md:flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-4 xl:px-5 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-orange-200 whitespace-nowrap"
             >
               Book Appointment
             </button>
@@ -188,7 +189,7 @@ export function MobileMenu({ onBook }: { onBook: () => void }) {
       <button
         type="button"
         onClick={onBook}
-        className="w-full mt-4 bg-[#FF9D00] hover:bg-[#e88e00] text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+        className="w-full mt-4 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold py-3 rounded-xl text-sm transition-colors"
       >
         Book an Appointment
       </button>

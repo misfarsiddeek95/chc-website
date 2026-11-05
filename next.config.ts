@@ -20,14 +20,19 @@ function formEndpointOrigin(): string {
   }
 }
 
+const turnstile = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)
+const analytics = Boolean(process.env.NEXT_PUBLIC_GA_ID)
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   // Next.js inlines its bootstrap scripts; 'unsafe-eval' is needed only by the dev server.
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}${turnstile ? ' https://challenges.cloudflare.com' : ''}${analytics ? ' https://www.googletagmanager.com' : ''}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://images.unsplash.com https://completehealthcareconnect.com.au",
+  `img-src 'self' data: blob: https://images.unsplash.com https://completehealthcareconnect.com.au https://i.ytimg.com${analytics ? ' https://*.google-analytics.com https://www.googletagmanager.com' : ''}`,
   "font-src 'self'",
-  `connect-src 'self' ${formEndpointOrigin()}`.trim(),
+  `connect-src 'self' ${formEndpointOrigin()}${analytics ? ' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com' : ''}`.trim(),
+  // YouTube (privacy-enhanced mode, loaded on click) and Cloudflare Turnstile (only when enabled).
+  `frame-src https://www.youtube-nocookie.com https://www.google.com ${turnstile ? 'https://challenges.cloudflare.com' : ''}`.trim(),
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -57,6 +62,10 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   reactStrictMode: true,
   poweredByHeader: false,
+  // `route.api.ts` (the form endpoint) exists only in the server build: a static export can't run POST handlers.
+  pageExtensions: isStaticExport ? ['tsx', 'ts', 'jsx', 'js'] : ['tsx', 'ts', 'jsx', 'js', 'api.ts'],
+  // The server build posts forms to its own /api/enquiry; the static build falls back to email unless an endpoint is set.
+  env: { NEXT_PUBLIC_FORM_ENDPOINT: process.env.NEXT_PUBLIC_FORM_ENDPOINT || (isStaticExport ? '' : '/api/enquiry') },
   ...(isStaticExport ? { output: 'export' as const } : {}),
   images: {
     // A static export has no server to resize images, so they are served as-is.
