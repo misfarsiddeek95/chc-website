@@ -41,7 +41,7 @@ export default function AboutPage() {
               We started in Brisbane with a simple aim: to provide, or connect people with, the best possible care. Today our clinics across South East Queensland bring physiotherapy, occupational therapy, speech pathology, podiatry, nursing and support work together under one roof.
             </p>
             <p className="text-gray-600 text-lg leading-relaxed">
-              We also support clients in other states through mobile services and telehealth, and we plan to keep growing so more Australians can access connected, high-quality care.
+              We provide services across Australia through mobile services and telehealth, and we plan to keep growing so more Australians can access connected, high-quality care.
             </p>
           </div>
           <div className="grid gap-5">
@@ -127,7 +127,7 @@ export default function AboutPage() {
         <h2 id="more-title" className="sr-only">More about us</h2>
         <ul className="grid md:grid-cols-3 gap-6">
           {[
-            { t: 'Our team', b: 'Meet our clinicians, nurses, coordinators and support workers.', to: '/our-team/' },
+            { t: 'Our team', b: 'Meet our doctors, clinicians, nurses, coordinators and support workers.', to: '/our-team/' },
             { t: 'Funding schemes', b: 'See the funding schemes we are registered or approved with.', to: '/funding-schemes/' },
             { t: 'Locations', b: 'Find your nearest clinic, or ask about mobile and telehealth services.', to: '/locations/' },
           ].map(c => (

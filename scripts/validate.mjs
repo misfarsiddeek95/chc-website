@@ -157,6 +157,13 @@ if (!isStatic) {
     if (focused !== 'phone') throw new Error('focus not moved to the field: ' + focused)
   })
 }
+await step('homepage: "Make a Referral" links to the referral form', async () => {
+  await page.goto(base + '/')
+  const links = page.getByRole('link', { name: /Make a Referral/ })
+  if (await links.count() < 2) throw new Error('expected Make a Referral links on the homepage')
+  const href = await links.first().getAttribute('href')
+  if (!/ndis-referral/.test(href ?? '')) throw new Error('Make a Referral does not point at the referral form: ' + href)
+})
 await step('enquiry form success state', async () => {
   await page.goto(base + '/contact/')
   await page.getByLabel('First name').fill('Test')

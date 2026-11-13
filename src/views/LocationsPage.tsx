@@ -13,7 +13,7 @@ export default function LocationsPage() {
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Locations' }]}
         badge={`${clinics.length} clinics · Mobile & telehealth`}
         title="Find a clinic near you."
-        intro={<p>Visit one of our three South East Queensland clinics, or let our clinicians and support workers come to you at home, school or work. In other states we provide in-home support and telehealth.</p>}
+        intro={<p>Visit one of our three South East Queensland clinics, or let our clinicians and support workers come to you at home, school or work. We provide services across Australia, with in-home support and telehealth outside South East Queensland.</p>}
         onBook
         onChat
         aside={
@@ -99,9 +99,9 @@ export default function LocationsPage() {
 
       <Section tone="white" id="other-states" labelledBy="other-states-title">
         <SectionHeader
-          eyebrow="Outside South East Queensland"
+          eyebrow="Services across Australia"
           title={<span id="other-states-title">No clinic near you? We can still help.</span>}
-          intro="We don’t have clinics outside South East Queensland, but we provide in-home support and telehealth in these regions."
+          intro="Our clinics are in South East Queensland, and we provide services across Australia through in-home support and telehealth, including in these regions."
         />
         <ul className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {serviceRegions.map(r => (

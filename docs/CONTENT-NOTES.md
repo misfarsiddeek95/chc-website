@@ -230,3 +230,19 @@ Not done on purpose:
 - **Star ratings and AggregateRating schema:** fake ratings break Google's rules. Link to Google reviews instead.
 - **Policy pages:** they stay `noindex` until the approved wording is in.
 - **Photo file names:** these change when the real photos arrive.
+
+## 9. Client review changes (13 Nov 2026)
+
+1. **Medical doctors:** a new "Medical doctors" section on Our Team. Names and roles are **MOCK** (`src/views/TeamPage.tsx`); replace them with CHC's doctors, with their consent.
+2. **Director's profile removed** from Our Team, at the client's request.
+3. **3 clinics everywhere:** the hero badges on the homepage still showed "5 Locations"; they now say "3 Clinics".
+4. **Services across Australia:** shown in the homepage hero badge and figures ("AU, Australia-wide"), the footer, About, Locations, the schema (areaServed now includes Country: Australia) and llms.txt.
+5. **Support workers = 3** everywhere: the homepage hero badge and figures, plus the Our Team list. The three names shown (Ali, Anayet, Aref) are a **MOCK** selection; confirm which three.
+6. **Registered Nurses** named explicitly:
+   - Our Team: the heading is now "Nursing: Registered Nurses & Enrolled Nurses".
+   - Disability Services: specialist nursing and DVA nursing.
+   - Aged Care: Support at Home and DVA.
+   - Home & Community Support.
+7. **Homepage "Book an Appointment" → "Make a Referral":** the Who We Help panels, the location cards and the final call to action now link to the referral form (`forms.referral`, a **MOCK** Zanda link until the real form exists). They open in a new tab and record a `referral_click` analytics event. The header's site-wide "Book Appointment" button stays.
+
+The "10K+ Clients Supported" hero badge was also replaced, because that number was never confirmed.

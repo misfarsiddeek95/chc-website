@@ -99,7 +99,7 @@ export const services: ServiceContent[] = [
           {
             tag: 'DVA Community Nursing',
             title: 'Dedicated healthcare for Australian veterans',
-            body: 'Professional in-home nursing for eligible veterans, war widows and widowers. Services are subject to DVA eligibility and referral requirements.',
+            body: 'In-home nursing by Registered Nurses for eligible veterans, war widows and widowers. Services are subject to DVA eligibility and referral requirements.',
             items: ['Nursing assessments & care planning', 'Wound care & medication management', 'Chronic disease & diabetes management', 'Continence, catheter & stoma care', 'Post-hospital & palliative nursing'],
           },
         ],
@@ -110,8 +110,8 @@ export const services: ServiceContent[] = [
         eyebrow: 'Specialist nursing',
         title: 'Specialist nursing and complex care.',
         body: [
-          'Our nursing team supports people with complex healthcare needs, including brain and spinal cord injuries, complex wounds, enteral feeding, continence care, respiratory support and chronic disease management.',
-          'Services are tailored to individual clinical needs and delivered by appropriately qualified professionals.',
+          'Our Registered Nurses (RNs) support people with complex healthcare needs, including brain and spinal cord injuries, complex wounds, enteral feeding, continence care, respiratory support and chronic disease management.',
+          'Care is planned and overseen by Registered Nurses, tailored to individual clinical needs, and delivered by appropriately qualified professionals.',
         ],
         img: img('photo-1760992003987-efc5259bcfbf', 700, 875),
         imgAlt: 'Older woman in a wheelchair outdoors with her support worker',
@@ -137,7 +137,7 @@ export const services: ServiceContent[] = [
         items: [
           'Registered NDIS and NIISQ provider',
           'DVA Community Nursing services',
-          'Experienced nurses, allied health professionals and support workers',
+          'Experienced Registered Nurses, allied health professionals and support workers',
           'Expertise in neurological rehabilitation and complex care',
           'Flexible, person-centred healthcare',
         ],
@@ -205,12 +205,12 @@ export const services: ServiceContent[] = [
         eyebrow: 'Our aged care services',
         title: 'Compassionate, coordinated, person-centred care.',
         cards: [
-          { tag: 'Helping you live independently', title: 'Support at Home Program', body: 'Services through eligible Support at Home arrangements.', items: ['Personal care & domestic assistance', 'Community nursing & medication management', 'Physiotherapy, OT & podiatry', 'Falls prevention & rehabilitation', 'Assistive technology, transport & community participation'] },
+          { tag: 'Helping you live independently', title: 'Support at Home Program', body: 'Services through eligible Support at Home arrangements.', items: ['Personal care & domestic assistance', 'Registered Nurse care & medication management', 'Physiotherapy, OT & podiatry', 'Falls prevention & rehabilitation', 'Assistive technology, transport & community participation'] },
           { tag: 'Practical support for everyday living', title: 'Commonwealth Home Support Programme (CHSP)', body: 'Entry-level home care services, including personal care, domestic assistance, nursing, allied health and community support, through appropriate provider arrangements.' },
           { tag: 'Rebuild strength. Restore independence.', title: 'Restorative care & rehabilitation', body: 'Physiotherapy, occupational therapy, falls prevention, neurological rehabilitation and personalised reablement programs to support recovery after illness, injury or surgery.' },
           { tag: 'Supporting recovery after hospital', title: 'Transition Care Program (TCP)', body: 'Nursing, rehabilitation and daily living assistance through appropriate transition care arrangements, to help eligible older Australians recover safely at home.', to: '/maintenance-in-the-home/', linkLabel: 'Maintenance in the Home' },
           { tag: 'Flexible support for older people and carers', title: 'Respite & short-term care', body: 'In-home respite, personal care, nursing and short-term support, with help exploring residential respite through approved providers.' },
-          { tag: 'Dedicated healthcare for veterans', title: 'DVA Community Nursing', body: 'In-home nursing for eligible veterans, including wound care, medication management, chronic disease support, continence care and palliative nursing.' },
+          { tag: 'Dedicated healthcare for veterans', title: 'DVA Community Nursing', body: 'In-home nursing by Registered Nurses for eligible veterans, including wound care, medication management, chronic disease support, continence care and palliative nursing.' },
         ],
       },
       {
@@ -590,7 +590,7 @@ export const services: ServiceContent[] = [
         eyebrow: 'Why choose CHC',
         title: 'Local teams who respond quickly.',
         items: [
-          'Qualified support workers, enrolled nurses and community care professionals',
+          'Registered Nurses, enrolled nurses, qualified support workers and community care professionals',
           'Services shaped around your goals and preferences',
           'Bilingual and multilingual staff',
           'Local teams across Brisbane, Logan, Ipswich, North Lakes, Caboolture, the Redlands and the Gold Coast',

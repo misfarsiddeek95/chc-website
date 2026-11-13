@@ -12,7 +12,7 @@ export function GET() {
 
   const body = `# ${SITE_NAME}
 
-> ${SITE_NAME} (CHC) is a registered NDIS and NIISQ provider offering allied health (physiotherapy, occupational therapy, speech pathology, podiatry), NDIS disability support, community nursing, DVA Community Nursing, aged care, paediatric early intervention and supported accommodation. It has three clinics in South East Queensland and provides in-home support and telehealth in other Australian states.
+> ${SITE_NAME} (CHC) is a registered NDIS and NIISQ provider offering allied health (physiotherapy, occupational therapy, speech pathology, podiatry), NDIS disability support, community nursing, DVA Community Nursing, aged care, paediatric early intervention and supported accommodation. It has three clinics in South East Queensland and provides services across Australia through in-home support and telehealth.
 
 - Phone: ${contact.phone} (after-hours calls also go to this number)
 - Fax: ${contact.fax}

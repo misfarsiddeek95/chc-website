@@ -23,7 +23,8 @@ export type RouteDef = {
 const home = { name: 'Home', path: '/' }
 
 // Where we take enquiries (src/content/site.ts › serviceRegions). In-person services depend on local availability.
-const areaServed = serviceRegions.map(r => ({ '@type': 'State', name: r.state, containedInPlace: { '@type': 'Country', name: 'Australia' } }))
+// Services across Australia (client review, Nov 2026), plus the states listed on the site.
+const areaServed = [{ '@type': 'Country', name: 'Australia' }, ...serviceRegions.map(r => ({ '@type': 'State', name: r.state, containedInPlace: { '@type': 'Country', name: 'Australia' } }))]
 
 const organization = {
   '@context': 'https://schema.org',
@@ -33,7 +34,7 @@ const organization = {
   url: SITE_URL,
   logo: `${SITE_URL}/brand/chc-mark.png`,
   alternateName: 'CHC',
-  description: 'Allied health, NDIS disability support, community nursing, aged care and in-home care, with three clinics in South East Queensland and in-home support and telehealth in other Australian states, subject to availability.',
+  description: 'Allied health, NDIS disability support, community nursing, aged care and in-home care, with three clinics in South East Queensland and services across Australia through in-home support and telehealth.',
   telephone: '+61-1300-450-334',
   email: contact.email,
   faxNumber: '+61-7-3036-6061',

@@ -41,7 +41,7 @@ export default function SiteFooter({ onBook }: { onBook: () => void }) {
               <Logo size={36} light />
             </div>
             <p className="text-white/60 text-sm leading-relaxed mb-5">
-              Allied health, NDIS disability support and in-home care. Three clinics in South East Queensland, with in-home support and telehealth in other states.
+              Allied health, NDIS disability support and in-home care. Three clinics in South East Queensland, with services across Australia through in-home support and telehealth.
             </p>
             <div className="flex gap-3">
               {social.map(s => (

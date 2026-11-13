@@ -6,7 +6,7 @@ import niisqLogo from '@/assets/niisq-logo.png'
 import { Icons } from '@/components/Icons'
 import Link from '@/components/Link'
 import { useSiteUi } from '@/ui-context'
-import { social, videoTestimonials } from '@/content/site'
+import { forms, social, videoTestimonials } from '@/content/site'
 
 // ─── Hero slider ─────────────────────────────────────────────────────────────
 
@@ -131,9 +131,10 @@ const heroPrimaryCls =
 
 const heroStats = [
   { value: '30+', label: 'Clinicians', tone: 'light', pos: '-left-4 md:-left-8 top-16', delay: '0s', icon: 'users' },
-  { value: '50+', label: 'Support Workers', tone: 'brand', pos: '-right-3 md:-right-6 top-[38%]', delay: '-1.5s', icon: 'userplus' },
-  { value: '10K+', label: 'Clients Supported', tone: 'accent', pos: '-left-4 md:-left-8 bottom-[22%]', delay: '-3s', icon: 'heart' },
-  { value: '5', label: 'Locations', tone: 'light', pos: '-right-3 md:-right-6 bottom-10', delay: '-4.5s', icon: 'pin' },
+  // Client review (13 Nov 2026): 3 support workers, 3 clinics, services across Australia.
+  { value: '3', label: 'Support Workers', tone: 'brand', pos: '-right-3 md:-right-6 top-[38%]', delay: '-1.5s', icon: 'userplus' },
+  { value: 'AU', label: 'Services Australia-wide', tone: 'accent', pos: '-left-4 md:-left-8 bottom-[22%]', delay: '-3s', icon: 'heart' },
+  { value: '3', label: 'Clinics', tone: 'light', pos: '-right-3 md:-right-6 bottom-10', delay: '-4.5s', icon: 'pin' },
 ] as const
 
 function StatIcon({ name }: { name: string }) {
@@ -716,7 +717,7 @@ const audiences = [
   },
 ]
 
-function WhoWeHelp({ onBook }: { onBook: () => void }) {
+function WhoWeHelp() {
   const [active, setActive] = useState(0)
 
   return (
@@ -763,14 +764,11 @@ function WhoWeHelp({ onBook }: { onBook: () => void }) {
               <div aria-hidden="true" className="text-4xl mb-4">{a.icon}</div>
               <h3 className="font-display text-3xl font-bold text-[#1a1238] mb-4">{a.label}</h3>
               <p className="text-gray-600 text-lg leading-relaxed mb-6">{a.desc}</p>
-              <button
-                type="button"
-                onClick={onBook}
-                className="flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3 rounded-xl text-sm transition-colors"
-              >
-                Book an Appointment
+              {/* Client review (Nov 2026): homepage CTA is "Make a Referral", linking to the referral form. */}
+              <a href={forms.referral} target="_blank" rel="noopener noreferrer" data-track="referral_click" className="flex items-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3 rounded-xl text-sm transition-colors">
+                Make a Referral<span className="sr-only"> (opens the referral form in a new tab)</span>
                 <Icons.ArrowRight />
-              </button>
+              </a>
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-500 tracking-widest uppercase mb-4">Relevant services</p>
@@ -822,9 +820,8 @@ const formatNumber = (n: number) => n.toLocaleString('en-AU')
 const stats = [
   // Confirmed by the business (Nov 2026). A client count was not confirmed, so it isn't shown.
   { value: 30, suffix: '+', label: 'Clinicians' },
-  { value: 50, suffix: '+', label: 'Support Workers & Carers' },
+  { value: 3, suffix: '', label: 'Support Workers' },
   { value: 3, suffix: '', label: 'Clinics in SEQ' },
-  { value: 5, suffix: '', label: 'States Served' },
 ]
 
 const differentiators = [
@@ -890,6 +887,13 @@ function WhyChoose() {
               <StatItem {...s} phase={phase} />
             </div>
           ))}
+          {/* Coverage (client review, Nov 2026): services across Australia. */}
+          <div data-reveal className="bg-white rounded-2xl shadow-sm border border-purple-100">
+            <div className="text-center p-6">
+              <div aria-hidden="true" className="font-display text-5xl md:text-6xl font-bold text-[#27156F] mb-2">AU</div>
+              <div className="text-gray-500 font-medium"><span className="sr-only">Services </span>Australia-wide</div>
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-3 max-w-3xl mx-auto">
@@ -1352,7 +1356,7 @@ const LOCATION_INTERVAL_MS = 6000
  * restarts its 6s count after a manual choice, and is off for people who prefer
  * reduced motion. Arrow keys, Home and End move between the tabs.
  */
-export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; initialIndex?: number }) {
+export function Locations({ initialIndex = 0 }: { initialIndex?: number }) {
   const [active, setActive] = useState(initialIndex)
   const [holding, setHolding] = useState(false)
   const [sectionRef, inView] = useInView<HTMLElement>()
@@ -1447,13 +1451,11 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
               </div>
 
               <div className="flex lg:flex-col items-center gap-3">
-                <button
-                  type="button"
-                  onClick={onBook}
-                  className="bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3.5 rounded-xl transition-colors whitespace-nowrap"
-                >
-                  Book an Appointment
-                </button>
+                {/* Client review (Nov 2026): homepage CTA is "Make a Referral", linking to the referral form. */}
+                <a href={forms.referral} target="_blank" rel="noopener noreferrer" data-track="referral_click" className="inline-flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-6 py-3.5 rounded-xl transition-colors whitespace-nowrap">
+                  Make a Referral<span className="sr-only"> (opens the referral form in a new tab)</span>
+                  <Icons.ArrowRight />
+                </a>
                 <div className="flex items-center gap-2">
                   <button type="button" onClick={showPrevious} aria-label="Previous city" className="w-12 h-12 md:w-10 md:h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors">
                     <span className="rotate-180"><Icons.ArrowRight /></span>
@@ -1504,7 +1506,7 @@ export function Locations({ onBook, initialIndex = 0 }: { onBook: () => void; in
 
 // ─── Final CTA ────────────────────────────────────────────────────────────────
 
-function FinalCTA({ onBook, onChat }: { onBook: () => void; onChat: () => void }) {
+function FinalCTA({ onChat }: { onChat: () => void }) {
   return (
     <section className="py-20 md:py-28 bg-[#FAFAF7] relative overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 opacity-40">
@@ -1521,14 +1523,11 @@ function FinalCTA({ onBook, onChat }: { onBook: () => void; onChat: () => void }
           Whether you know the service you need or simply want to talk through your options, our team is here to help.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <button
-            type="button"
-            onClick={onBook}
-            className="flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]"
-          >
-            Book an Appointment
+          {/* Client review (Nov 2026): homepage CTA is "Make a Referral", linking to the referral form. */}
+          <a href={forms.referral} target="_blank" rel="noopener noreferrer" data-track="referral_click" className="flex items-center justify-center gap-2 bg-[#FF9D00] hover:bg-[#e88e00] text-[#1a1238] font-semibold px-8 py-4 rounded-xl text-base transition-all shadow-lg shadow-orange-200 hover:shadow-orange-300 hover:scale-[1.02]">
+            Make a Referral<span className="sr-only"> (opens the referral form in a new tab)</span>
             <Icons.ArrowRight />
-          </button>
+          </a>
           <button
             type="button"
             onClick={onChat}
@@ -1560,14 +1559,14 @@ export default function HomePage() {
       <Services onChat={openChat} />
       <HomeCare />
       <Accommodation />
-      <WhoWeHelp onBook={openBook} />
+      <WhoWeHelp />
       <WhyChoose />
       <FundingMarquee />
       <Testimonials />
       <Referrals />
       <OperationalForms />
-      <Locations onBook={openBook} />
-      <FinalCTA onBook={openBook} onChat={openChat} />
+      <Locations />
+      <FinalCTA onChat={openChat} />
     </>
   )
 }

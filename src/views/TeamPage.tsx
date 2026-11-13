@@ -11,7 +11,7 @@ const groups: { id: string; title: string; intro: string; members: Member[] }[] 
     title: 'Management & coordination',
     intro: 'Keeping care organised, from your first call to your ongoing plan.',
     members: [
-      { name: 'Ansbert', role: 'Director' },
+      // Director's profile removed at the client's request (13 Nov 2026).
       { name: 'Naomi', role: 'In-Home & Community Support Coordinator' },
       { name: 'Chandni', role: 'Marketing Consultant' },
       { name: 'Hafsa', role: 'Accountant' },
@@ -51,9 +51,21 @@ const groups: { id: string; title: string; intro: string; members: Member[] }[] 
     ],
   },
   {
+    // Client review (13 Nov 2026): add a Medical Doctors section.
+    // MOCK names and roles: replace with CHC's doctors (with their consent) before launch.
+    id: 'medical-doctors',
+    title: 'Medical doctors',
+    intro: 'CHC’s own doctors provide medical assessments, clinical oversight, medication reviews and telehealth consultations, working closely with our nurses and allied health team.',
+    members: [
+      { name: 'Dr Michael', role: 'Senior Medical Officer' },
+      { name: 'Dr Priya', role: 'Medical Officer' },
+      { name: 'Dr Samuel', role: 'Medical Officer (Telehealth)' },
+    ],
+  },
+  {
     id: 'nursing',
-    title: 'Nursing',
-    intro: 'Registered and enrolled nurses providing community and complex care.',
+    title: 'Nursing: Registered Nurses & Enrolled Nurses',
+    intro: 'Our Registered Nurses (RNs) lead community nursing, wound care, medication management and complex care, supported by Enrolled Nurses (ENs).',
     members: [
       { name: 'Tanaka', role: 'Community Nurse (RN)' },
       { name: 'Paulette', role: 'Community Nurse (RN)' },
@@ -63,11 +75,9 @@ const groups: { id: string; title: string; intro: string; members: Member[] }[] 
   },
 ]
 
-const supportWorkers = [
-  'Ali', 'Anayet', 'Aref', 'Christine', 'Dennis', 'Diana', 'Eric', 'Getrude', 'Gracezel', 'Jack', 'Jacquis', 'Johnson',
-  'Joshua', 'Karla', 'Nabilah', 'Nomzamo', 'Nusrat', 'Omy', 'Pamphile', 'Peter K', 'Rahila', 'Rose', 'Rubab', 'Sophia',
-  'Winnie', 'Yout', 'Zia', 'Zvareverwei',
-]
+// Client review (13 Nov 2026): 3 support workers. MOCK selection: the first three names
+// from the previous list; confirm which three to show.
+const supportWorkers = ['Ali', 'Anayet', 'Aref']
 
 function initials(name: string) {
   return name.split(/\s+/).map(p => p[0]).join('').slice(0, 2).toUpperCase()
@@ -78,9 +88,9 @@ export default function TeamPage() {
     <>
       <PageHero
         crumbs={[{ label: 'Home', to: '/' }, { label: 'About', to: '/about-us/' }, { label: 'Our Team' }]}
-        badge="Clinicians · Nurses · Support workers"
+        badge="Doctors · Clinicians · Nurses · Support workers"
         title="Meet the people behind your care."
-        intro={<p>Our multidisciplinary team works together across allied health, nursing and in-home support, so you get joined-up care from people who know you.</p>}
+        intro={<p>Our multidisciplinary team works together across medicine, allied health, nursing and in-home support, so you get joined-up care from people who know you.</p>}
         img="https://images.unsplash.com/photo-1764006145420-df3006edf060?w=800&h=600&fit=crop&auto=format"
         imgAlt="Healthcare professional with a client in a wheelchair"
         onBook
